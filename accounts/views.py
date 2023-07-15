@@ -13,6 +13,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.shortcuts import HttpResponseRedirect
+from django.forms.models import model_to_dict
 
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -85,10 +86,18 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
+        if user.is_staff and  not user.is_admin:
+            counselor = CounselorProfile.objects.get(counselor=user)
+            token['counselor'] = model_to_dict(counselor)
+            print('----------Token is -------------',token['counselor'])
+
+
         # Add custom claims
         token['email'] = user.email
         token['is_admin'] = user.is_admin
         token['is_staff'] = user.is_staff
+        token['is_active'] = user.is_active
+
         # ...
 
         return token

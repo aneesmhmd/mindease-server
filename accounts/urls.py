@@ -1,7 +1,7 @@
 from django.urls import path, include
 from . import views
 from . views import UserRegistration, ForgotPassword, ResetPassword, MyTokenObtainPairView
-from rest_framework_simplejwt.views import (TokenRefreshView)
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path('', views.get_routes),
