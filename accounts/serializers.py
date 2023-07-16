@@ -7,3 +7,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = '__all__'
+
+
+
+class GoogleAuthSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = '__all__'

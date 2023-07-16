@@ -1,10 +1,13 @@
 from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
-from .serializers import UserRegisterSerializer
-from .models import Account
-from counselor.models import CounselorProfile
 from rest_framework.decorators import api_view
+from rest_framework import status
+
+from counselor.models import CounselorProfile
+from .models import Account
+from .serializers import UserRegisterSerializer, GoogleAuthSerializer
+from .token import create_jwt_pair_tokens
+
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -14,6 +17,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.shortcuts import HttpResponseRedirect
 from django.forms.models import model_to_dict
+from django.contrib.auth import authenticate
 
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -33,15 +37,14 @@ def get_routes(request):
 class UserRegistration(APIView):
     def post(self, request):
         email = request.data.get('email')
-        # role = request.data.get('role')
 
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+
             user = serializer.save()
 
-            if user.is_staff == True:
-                # user.is_staff = True
-                # user.save()
+            if user.is_staff:
+                user.role = 'counselor'
                 CounselorProfile.objects.create(counselor=user)
 
             current_site = get_current_site(request)
@@ -72,7 +75,7 @@ def activate(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        message = 'Your account has been activated'
+        message = 'Congrats! Account activated!'
         redirect_url = 'http://localhost:5173/login/' + '?message=' + message
     else:
         message = 'Invalid activation link'
@@ -86,19 +89,14 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
-        if user.is_staff and  not user.is_admin:
+        if user.is_staff and not user.is_admin:
             counselor = CounselorProfile.objects.get(counselor=user)
             token['counselor'] = model_to_dict(counselor)
-            print('----------Token is -------------',token['counselor'])
-
 
         # Add custom claims
         token['email'] = user.email
-        token['is_admin'] = user.is_admin
-        token['is_staff'] = user.is_staff
+        token['role'] = user.role
         token['is_active'] = user.is_active
-
-        # ...
 
         return token
 
@@ -107,12 +105,49 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
+class GoogleAuthentication(APIView):
+
+    def post(self, request):
+
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if not Account.objects.filter(email=email).exists():
+            serializer = GoogleAuthSerializer(data=request.data)
+
+            if serializer.is_valid(raise_exception=True):
+                user = serializer.save()
+                user.is_active = True
+                user.set_password(password)
+                user.save()
+
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
+
+            tokens = create_jwt_pair_tokens(user)
+            response = {
+                'msg': "Login successfull",
+                'token': tokens,
+                'status': 200,
+                'user': {
+                    'user_id': user.id,
+                    'email': user.email,
+                    'is_active': user.is_active,
+                    'role': user.role,
+                },
+            }
+
+            return Response(data=response, status=status.HTTP_200_OK)
+
+        return Response(data={'msg': 'Login Failed', 'status': 400})
+
+
 class ForgotPassword(APIView):
     def post(self, request, format=None):
         email = request.data.get('email')
 
-        if Account.object.filter(email=email).exists():
-            user = Account.object.get(email__exact=email)
+        if Account.objects.filter(email=email).exists():
+            user = Account.objects.get(email__exact=email)
 
             current_site = get_current_site(request)
             mail_subject = 'Please reset your password'
@@ -155,7 +190,7 @@ class ResetPassword(APIView):
         password = request.data.get('password')
 
         if uid:
-            user = Account.object.get(id=uid)
+            user = Account.objects.get(id=uid)
             user.set_password(password)
             user.save()
 
