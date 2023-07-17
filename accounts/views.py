@@ -37,11 +37,14 @@ def get_routes(request):
 class UserRegistration(APIView):
     def post(self, request):
         email = request.data.get('email')
+        password =request.data.get('password')
 
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
 
             user = serializer.save()
+            user.set_password(password)
+            user.save()
 
             if user.is_staff:
                 user.role = 'counselor'

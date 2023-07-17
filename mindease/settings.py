@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'home',
     'accounts',
     'counselor',
+    'admin_home',
 
 ]
 
