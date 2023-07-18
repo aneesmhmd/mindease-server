@@ -8,7 +8,6 @@ from .models import Account
 from .serializers import UserRegisterSerializer, GoogleAuthSerializer
 from .token import create_jwt_pair_tokens
 
-
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -57,6 +56,7 @@ class UserRegistration(APIView):
                 'domain': current_site,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': default_token_generator.make_token(user),
+                'cite' : current_site
             })
             to_email = email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
@@ -92,7 +92,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
-        if user.is_staff and not user.is_admin:
+        if not user.is_admin and user.is_staff:
             counselor = CounselorProfile.objects.get(counselor=user)
             token['counselor'] = model_to_dict(counselor)
 
@@ -131,13 +131,7 @@ class GoogleAuthentication(APIView):
             response = {
                 'msg': "Login successfull",
                 'token': tokens,
-                'status': 200,
-                'user': {
-                    'user_id': user.id,
-                    'email': user.email,
-                    'is_active': user.is_active,
-                    'role': user.role,
-                },
+                'status': 200
             }
 
             return Response(data=response, status=status.HTTP_200_OK)
@@ -183,7 +177,7 @@ def reset_validate(request, uidb64, token):
         session_id = request.session.get('uid')
         print(session_id)
 
-        return HttpResponseRedirect('http://localhost:5173/reset-password/')
+        return HttpResponseRedirect(f'http://localhost:5173/reset-password/?{uid}')
 
 
 class ResetPassword(APIView):
