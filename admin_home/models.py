@@ -5,7 +5,7 @@ from accounts.models import Account
 
 class RandomTokenGenerator(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
-    token = models.CharField(max_length=100, unique=True)
+    token = models.CharField(max_length=50, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

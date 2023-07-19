@@ -51,7 +51,7 @@ class UserRegistration(APIView):
 
             current_site = get_current_site(request)
             mail_subject = 'Please activate your account'
-            message = render_to_string('accounts/account_verification.html', {
+            message = render_to_string('user/account_verification.html', {
                 'user': user,
                 'domain': current_site,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -148,7 +148,7 @@ class ForgotPassword(APIView):
 
             current_site = get_current_site(request)
             mail_subject = 'Please reset your password'
-            message = render_to_string('accounts/reset_password.html', {
+            message = render_to_string('user/reset_password.html', {
                 'user': user,
                 'domain': current_site,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -172,12 +172,8 @@ def reset_validate(request, uidb64, token):
         user = None
 
     if user is not None and default_token_generator.check_token(user, token):
-        request.session['uid'] = uid
-
-        session_id = request.session.get('uid')
-        print(session_id)
-
-        return HttpResponseRedirect(f'http://localhost:5173/reset-password/?{uid}')
+       
+        return HttpResponseRedirect(f'http://localhost:5173/reset-password/')
 
 
 class ResetPassword(APIView):

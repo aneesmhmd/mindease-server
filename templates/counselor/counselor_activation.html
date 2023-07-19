@@ -1,0 +1,10 @@
+{% autoescape off %}
+
+Hi {{ user.first_name }} {{user.last_name}}
+
+Please click the following link to activate your account:
+{{ activation_url }}
+
+If you think it's not you, ignore this email.
+
+{% endautoescape %}
