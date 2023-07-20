@@ -63,7 +63,6 @@ class UserRegistration(APIView):
             send_email.send()
 
             return Response({'status': 'success', 'msg': 'A verificaiton link sent to your registered email address', "data": serializer.data})
-
         return Response({'status': 'error', 'msg': 'Registration failed'})
 
 
