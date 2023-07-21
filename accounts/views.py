@@ -5,7 +5,7 @@ from rest_framework import status
 
 from counselor.models import CounselorProfile
 from .models import Account
-from .serializers import UserRegisterSerializer, GoogleAuthSerializer
+from .serializers import UserRegisterSerializer, GoogleAuthSerializer, MyTokenObtainPairSerializer
 from .token import create_jwt_pair_tokens
 
 from django.contrib.sites.shortcuts import get_current_site
@@ -15,11 +15,9 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.shortcuts import HttpResponseRedirect
-from django.forms.models import model_to_dict
 from django.contrib.auth import authenticate
 
 
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 # Create your views here.
 
@@ -63,7 +61,9 @@ class UserRegistration(APIView):
             send_email.send()
 
             return Response({'status': 'success', 'msg': 'A verificaiton link sent to your registered email address', "data": serializer.data})
-        return Response({'status': 'error', 'msg': 'Registration failed'})
+        else:
+            print('Serializer errors are :',serializer.errors)
+            return Response({'status': 'error', 'msg': serializer.errors})
 
 
 @api_view(['GET'])
@@ -85,22 +85,6 @@ def activate(request, uidb64, token):
 
     return HttpResponseRedirect(redirect_url)
 
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-
-        if not user.is_admin and user.is_staff:
-            counselor = CounselorProfile.objects.get(counselor=user)
-            token['counselor'] = model_to_dict(counselor)
-
-        # Add custom claims
-        token['email'] = user.email
-        token['role'] = user.role
-        token['is_active'] = user.is_active
-
-        return token
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

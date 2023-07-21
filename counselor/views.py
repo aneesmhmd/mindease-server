@@ -24,20 +24,17 @@ class CounselorLogin(APIView):
                 tokens = create_jwt_pair_tokens(user)
                 response = {
                     'message' : 'Login succesfull',
-                    'token' : 'token',
-                    'status' : 200
+                    'token' : tokens,
                 }
 
                 return Response(data=response,status=status.HTTP_200_OK)
             else:
                 response = {
-                    'message' : 'Unauthorized login',
-                    'status' : 401
+                    'message' : 'You are not a counselor',
                 }
-                return Response(data=response)
+                return Response(data=response,status=status.HTTP_401_UNAUTHORIZED)
         else:
             response = {
-                'message' : 'Invalide login credentials',
-                'status' : 404
+                'message' : 'Invalid login credentials',
             }
-            return Response(data=response)
+            return Response(data=response,status=status.HTTP_404_NOT_FOUND)

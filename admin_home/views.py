@@ -78,7 +78,7 @@ class CounselorEmailValidation(APIView):
                 validated.user.save()
 
             validated.delete()
-            return HttpResponseRedirect(redirect_url + 'login/?message=Congrats!Check your email.')
+            return HttpResponseRedirect(redirect_url + 'counselor/login/?message=Congrats!Check your email.')
 
         except RandomTokenGenerator.DoesNotExist:
             message = 'Invalid token'
