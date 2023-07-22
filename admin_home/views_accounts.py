@@ -8,9 +8,13 @@ from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from counselor.models import CounselorProfile
 from accounts.serializers import UserRegisterSerializer
+from .serializers import UserSerializer
+from accounts.models import Account
 from .helpers import generate_token, generate_random_password
 from .models import RandomTokenGenerator
 from accounts.token import create_jwt_pair_tokens
@@ -110,7 +114,38 @@ class AdminLogin(APIView):
         else:
 
             response = {'message': 'Invalid login credentials'}
-            return Response(data=response,status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
+
+class ListUsers(ListAPIView):
+    queryset = Account.objects.filter(role='user', is_active=True)
+    serializer_class = UserSerializer
+
+
+class BlockUser(APIView):
+    def patch(self, request, pk):
+        try:
+            user = Account.objects.get(id=pk, role='user')
+            user.is_active = False
+            user.save()
+            return Response(data={'message': 'User blocked'}, status=status.HTTP_200_OK)
+        except Account.DoesNotExist:
+            return Response(data={'message': 'Invalid user'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ListCounselors(ListAPIView):
+    queryset = Account.objects.filter(
+        role='counselor', is_staff=True, is_active=True).exclude(is_admin=True)
+    serializer_class = UserSerializer
+
+
+class BlockCounselor(APIView):
+    def patch(self, request, pk):
+        try:
+            user = Account.objects.get(id=pk, role='counselor', is_staff=True, is_admin=False)
+            user.is_active = False
+            user.save()
+            return Response(data={'message': 'Counselor blocked'}, status=status.HTTP_200_OK)
+        except Account.DoesNotExist:
+            return Response(data={'message': 'Invalid counselor'}, status=status.HTTP_404_NOT_FOUND)
         
