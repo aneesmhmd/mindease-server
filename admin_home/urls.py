@@ -8,6 +8,6 @@ urlpatterns = [
     
     path('list-users/', ListUsers.as_view()),
     path('list-counselors/', ListCounselors.as_view()),
-    path('block-user/<int:pk>/', BlockUser.as_view()),
-    path('block-counselor/<int:pk>/', BlockCounselor.as_view()),
+    path('manage-user/<int:pk>/', ManageUser.as_view()),
+    path('manage-counselor/<int:pk>/', ManageCounselor.as_view()),
 ]

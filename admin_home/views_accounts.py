@@ -118,34 +118,43 @@ class AdminLogin(APIView):
 
 
 class ListUsers(ListAPIView):
-    queryset = Account.objects.filter(role='user', is_active=True)
+    queryset = Account.objects.filter(role='user')
     serializer_class = UserSerializer
 
 
-class BlockUser(APIView):
+class ManageUser(APIView):
     def patch(self, request, pk):
         try:
             user = Account.objects.get(id=pk, role='user')
-            user.is_active = False
+            user.is_active = not user.is_active
             user.save()
-            return Response(data={'message': 'User blocked'}, status=status.HTTP_200_OK)
+            if user.is_active:
+                message = 'User Unblocked'
+            else:
+                message = 'User blocked'
+            return Response(data={'message': message}, status=status.HTTP_200_OK)
         except Account.DoesNotExist:
             return Response(data={'message': 'Invalid user'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ListCounselors(ListAPIView):
     queryset = Account.objects.filter(
-        role='counselor', is_staff=True, is_active=True).exclude(is_admin=True)
+        role='counselor', is_staff=True).exclude(is_admin=True)
     serializer_class = UserSerializer
 
 
-class BlockCounselor(APIView):
+class ManageCounselor(APIView):
     def patch(self, request, pk):
         try:
+            print('This is the pl', pk)
             user = Account.objects.get(id=pk, role='counselor', is_staff=True, is_admin=False)
-            user.is_active = False
+            user.is_active = not user.is_active
             user.save()
-            return Response(data={'message': 'Counselor blocked'}, status=status.HTTP_200_OK)
+            if user.is_active:
+                message = 'Counselor Unblocked'
+            else:
+                message = 'Counselor blocked'
+            return Response(data={'message': message}, status=status.HTTP_200_OK)
         except Account.DoesNotExist:
             return Response(data={'message': 'Invalid counselor'}, status=status.HTTP_404_NOT_FOUND)
         
