@@ -1,4 +1,5 @@
 from rest_framework.views import APIView
+from rest_framework.generics import UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -173,3 +174,10 @@ class ResetPassword(APIView):
             return Response({'msg': 'Password reset succesfully'})
 
         return HttpResponseRedirect('http://localhost:5173/login/')
+
+class UpdateUserProfile(UpdateAPIView):
+    queryset = Account.objects.all()
+    serializer_class = UserRegisterSerializer
+
+# class ChangePassword(APIView):
+#     def post(self, request)

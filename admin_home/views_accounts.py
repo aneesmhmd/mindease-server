@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 
 from counselor.models import CounselorProfile
 from accounts.serializers import UserRegisterSerializer
@@ -26,7 +26,7 @@ from decouple import config
 
 class CounselorRegistration(APIView):
     def post(self, request):
-        serializer = UserRegisterSerializer(data=request.data['values'])
+        serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
 
             user = serializer.save()
@@ -118,7 +118,7 @@ class AdminLogin(APIView):
 
 
 class ListUsers(ListAPIView):
-    queryset = Account.objects.filter(role='user')
+    queryset = Account.objects.filter(role='user').order_by('-id')
     serializer_class = UserSerializer
 
 
@@ -139,14 +139,13 @@ class ManageUser(APIView):
 
 class ListCounselors(ListAPIView):
     queryset = Account.objects.filter(
-        role='counselor', is_staff=True).exclude(is_admin=True)
+        role='counselor', is_staff=True).exclude(is_admin=True).order_by('-id')
     serializer_class = UserSerializer
 
 
 class ManageCounselor(APIView):
     def patch(self, request, pk):
         try:
-            print('This is the pl', pk)
             user = Account.objects.get(id=pk, role='counselor', is_staff=True, is_admin=False)
             user.is_active = not user.is_active
             user.save()
