@@ -12,12 +12,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         model = Account
         fields = '__all__'
 
-    # def create(self, validated_data):
-    #     password = validated_data.pop('password')
-    #     user = super().create(validated_data)
-    #     user.set_password(password)
-    #     user.save()
-    #     return user
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = super().create(validated_data)
+        user.set_password(password)
+        user.save()
+        return user
 
 
 class GoogleAuthSerializer(serializers.ModelSerializer):
@@ -38,6 +38,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
+        if not user.is_active:
+            raise ValidationError('User is not active',code='inactive_user')
+
         if not user.is_admin and user.is_staff:
             counselor = CounselorProfile.objects.get(counselor=user)
             token['counselor'] = model_to_dict(counselor)
@@ -48,3 +51,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_active'] = user.is_active
 
         return token
+    
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['id', 'first_name', 'last_name', 'email', 'phone', 'profile_image']
+
+    def update(self, instance, validated_data):
+        validated_data.pop('profile_image',None)
+        return super().update(instance, validated_data)

@@ -27,12 +27,14 @@ from decouple import config
 class CounselorRegistration(APIView):
     def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
+        password = request.data.get('password')
         if serializer.is_valid(raise_exception=True):
 
             user = serializer.save()
             user.is_staff, user.role = True, 'counselor'
             user.save()
             CounselorProfile.objects.create(counselor=user)
+            print('User is :', user, ' with password ', password)
 
             activation_token = generate_token()
             print('This is our token:', activation_token)
@@ -47,6 +49,7 @@ class CounselorRegistration(APIView):
 
             result = send_mail(mail_subject, message,
                                settings.EMAIL_HOST_USER, [user.email])
+            print(result)
             if result:
                 RandomTokenGenerator.objects.create(
                     token=activation_token, user=user)

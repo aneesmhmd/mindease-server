@@ -178,6 +178,3 @@ class ResetPassword(APIView):
 class UpdateUserProfile(UpdateAPIView):
     queryset = Account.objects.all()
     serializer_class = UserRegisterSerializer
-
-# class ChangePassword(APIView):
-#     def post(self, request)

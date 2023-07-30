@@ -144,7 +144,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('NAME'),
         'USER': 'postgres',
-        'PASSWORD': 'nanianis',
+        'PASSWORD': config('PASSWORD'),
         'HOST': config('HOST'),
     }
 }
@@ -213,3 +213,12 @@ EMAIL_PORT = config('port')
 EMAIL_HOST_USER = config('user')
 EMAIL_HOST_PASSWORD = config('password')
 EMAIL_USE_TLS = config('tls')
+
+
+# cloudinary.config = {
+#     'cloud_name': 'dprttm3jj',
+#     'api_key': '476657165165615',
+#     'api_secret': 'OLFO3ExqOnxJovI-sbwBjaB2T7M',
+# }
+
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

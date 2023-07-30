@@ -3,6 +3,7 @@ from rest_framework.generics import ListAPIView, UpdateAPIView, DestroyAPIView, 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework import serializers
 
 from counselor.models import CounselorProfile
 from .serializers import ServicesSerializer
@@ -13,6 +14,12 @@ from home.models import Service
 class AddServices(CreateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServicesSerializer
+
+    def perform_create(self, serializer):
+        title = self.request.data.get('title', None)
+        if title and Service.objects.filter(title=title).exists():
+            raise serializers.ValidationError('Title should be unique')
+        serializer.save()
 
 
 class ListServices(ListAPIView):
