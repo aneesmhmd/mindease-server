@@ -1,11 +1,12 @@
 from django.urls import path, include
 from . import views
-from . views import UserRegistration, ForgotPassword, ResetPassword, MyTokenObtainPairView, GoogleAuthentication
-from . views_profile import UserProfile, ChangePassword, UpdateProfile
+from . views import *
+from . views_profile import *
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path('', views.get_routes),
+    path('user-auth/', views.user_auth, name='user-auth'),
     path('register/', UserRegistration.as_view()),
     # path('login/', MyTokenObtainPairView.as_view()),
     path('activate/<uidb64>/<token> ', views.activate, name='activate'),
@@ -20,6 +21,8 @@ urlpatterns = [
     path('google_authentication/', GoogleAuthentication.as_view()),
 
     path('user-profile/<int:id>/', UserProfile.as_view()),
-    path('update-profile/<int:id>/', UpdateProfile.as_view()),
+    path('update-profile/<int:id>/', UpdateUserProfile.as_view()),
     path('change-password/<int:id>/', ChangePassword.as_view()),
+    path('update-profile-photo/<int:id>/', UpdateUserProfilePhoto.as_view()),
+    path('remove-profile-photo/<int:id>/', RemoveUserProfilePhoto.as_view()),
 ]

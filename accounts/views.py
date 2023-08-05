@@ -32,6 +32,13 @@ def get_routes(request):
     return Response(routes)
 
 
+@api_view(['GET'])
+def user_auth(request):
+    auth_header = request.headers.get('Authorization')
+    print('Auth header:', request.headers)
+    return Response(data={'message':'success'})
+
+
 class UserRegistration(APIView):
     def post(self, request):
         email = request.data.get('email')

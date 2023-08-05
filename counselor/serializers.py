@@ -7,9 +7,6 @@ class CounselorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = '__all__'
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
 
 
 class CounselorProfileSerializer(serializers.ModelSerializer):
@@ -19,12 +16,14 @@ class CounselorProfileSerializer(serializers.ModelSerializer):
 
 
 class CounselorExperienceSerializer(serializers.ModelSerializer):
+    counselor = CounselorSerializer()
     class Meta:
         model = CounselorExperience
         fields = '__all__'
 
 
 class CounselorEducationSerializer(serializers.ModelSerializer):
+    counselor = CounselorSerializer()
     class Meta:
         model = CounselorEducation
         fields = '__all__'

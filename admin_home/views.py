@@ -43,12 +43,9 @@ class ManageServices(UpdateAPIView):
     serializer_class = ServicesSerializer
 
     def patch(self, request, *args, **kwargs):
-        print('Eneted here')
-
         instance = self.get_object()
         instance.is_active = not instance.is_active
         instance.save()
-        print('Instance is not active:', instance.is_active)
         if instance.is_active:
             message = f'"{instance.title}" listed succesfully'
         else:

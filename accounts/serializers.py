@@ -39,7 +39,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         if not user.is_active:
-            raise ValidationError('User is not active',code='inactive_user')
+            raise ValidationError('User is not active', code='inactive_user')
 
         if not user.is_admin and user.is_staff:
             counselor = CounselorProfile.objects.get(counselor=user)
@@ -51,12 +51,20 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_active'] = user.is_active
 
         return token
-    
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['id', 'first_name', 'last_name', 'email', 'phone', 'profile_image']
+        fields = ['id', 'first_name', 'last_name',
+                  'email', 'phone', 'profile_image']
 
     def update(self, instance, validated_data):
-        validated_data.pop('profile_image',None)
+        validated_data.pop('profile_image', None)
         return super().update(instance, validated_data)
+
+
+class ProfilePictureUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['profile_image']

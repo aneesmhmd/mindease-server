@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from counselor.models import CounselorProfile
 from accounts.serializers import UserRegisterSerializer
@@ -22,6 +22,31 @@ from accounts.token import create_jwt_pair_tokens
 from decouple import config
 
 # Create your views here.
+
+
+class AdminLogin(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        user = authenticate(request, email=email, password=password)
+        print(f'User is {user}')
+
+        if user is not None:
+            if user.is_active and user.is_admin and user.role == 'admin':
+                tokens = create_jwt_pair_tokens(user)
+                response = {
+                    'message': 'Login succesfull',
+                    'token': tokens
+                }
+                return Response(data=response, status=status.HTTP_200_OK)
+            else:
+                response = {'message': 'Unauthorized access'}
+                return Response(data=response, status=status.HTTP_401_UNAUTHORIZED)
+        else:
+
+            response = {'message': 'Invalid login credentials'}
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CounselorRegistration(APIView):
@@ -54,7 +79,7 @@ class CounselorRegistration(APIView):
                 RandomTokenGenerator.objects.create(
                     token=activation_token, user=user)
 
-            return Response({'msg': 'Counselor added succesfully!', 'status': 200})
+                return Response({'msg': 'Counselor added succesfully!', 'status': 200})
         return Response({'msg': 'Oops! Registration failed'})
 
 
@@ -95,31 +120,6 @@ class CounselorEmailValidation(APIView):
             return HttpResponseRedirect(redirect_url + 'login/?message=' + message)
 
 
-class AdminLogin(APIView):
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-
-        user = authenticate(request, email=email, password=password)
-        print(f'User is {user}')
-
-        if user is not None:
-            if user.is_active and user.is_admin and user.role == 'admin':
-                tokens = create_jwt_pair_tokens(user)
-                response = {
-                    'message': 'Login succesfull',
-                    'token': tokens
-                }
-                return Response(data=response, status=status.HTTP_200_OK)
-            else:
-                response = {'message': 'Unauthorized access'}
-                return Response(data=response, status=status.HTTP_401_UNAUTHORIZED)
-        else:
-
-            response = {'message': 'Invalid login credentials'}
-            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
-
 class ListUsers(ListAPIView):
     queryset = Account.objects.filter(role='user').order_by('-id')
     serializer_class = UserSerializer
@@ -138,25 +138,3 @@ class ManageUser(APIView):
             return Response(data={'message': message}, status=status.HTTP_200_OK)
         except Account.DoesNotExist:
             return Response(data={'message': 'Invalid user'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class ListCounselors(ListAPIView):
-    queryset = Account.objects.filter(
-        role='counselor', is_staff=True).exclude(is_admin=True).order_by('-id')
-    serializer_class = UserSerializer
-
-
-class ManageCounselor(APIView):
-    def patch(self, request, pk):
-        try:
-            user = Account.objects.get(id=pk, role='counselor', is_staff=True, is_admin=False)
-            user.is_active = not user.is_active
-            user.save()
-            if user.is_active:
-                message = 'Counselor Unblocked'
-            else:
-                message = 'Counselor blocked'
-            return Response(data={'message': message}, status=status.HTTP_200_OK)
-        except Account.DoesNotExist:
-            return Response(data={'message': 'Invalid counselor'}, status=status.HTTP_404_NOT_FOUND)
-        
