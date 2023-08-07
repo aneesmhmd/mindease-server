@@ -24,7 +24,7 @@ class CounselorEducation(models.Model):
     state = models.CharField(max_length=30)
     country = models.CharField(max_length=20)
     year = models.CharField(max_length=20)
-    certificate = models.ImageField(upload_to='certificates/')
+    certificate = models.ImageField(upload_to='edu_certificates/')
     is_verified = models.BooleanField(default=False)
 
     class Meta:
@@ -42,6 +42,7 @@ class CounselorExperience(models.Model):
     country = models.CharField(max_length=50)
     years_of_experience = models.BigIntegerField(null=True, blank=True)
     months_of_experience = models.IntegerField(null=True, blank=True)
+    certificate = models.ImageField(upload_to='exp_certificates')    
     is_verified = models.BooleanField(default=False)
 
     class Meta:

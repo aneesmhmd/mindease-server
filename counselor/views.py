@@ -80,8 +80,8 @@ class CounselorProfile(RetrieveAPIView):
 
 
 class UpdateCounselorProfile(UpdateAPIView):
+    queryset = Account.objects.filter(role='counselor')
     serializer_class = UserSerializer
-    queryset = Account.objects.all()
     lookup_field = 'id'
 
 

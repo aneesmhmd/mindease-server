@@ -17,6 +17,13 @@ urlpatterns = [
     path('manage-service/<int:pk>/', ManageServices.as_view()),
     path('update-service/<int:pk>/', UpdateServices.as_view()),
     path('delete-service/<int:pk>/', DeleteServices.as_view()),
+    path('list-psychological-tasks/', ListPsychologicalTasks.as_view()),
+    path('add-psychological-tasks/', AddPsychologicalTasks.as_view()),
+    path('add-task-items/<int:id>/', AddTaskItems.as_view()),
+    path('update-psychological-tasks/<int:id>/', UpdatePsychologicalTasks.as_view()),
+    path('delete-psychological-tasks/<int:id>/', DeletePsychologicalTasks.as_view()),
+    path('delete-task-items/<int:id>/', DeleteTaskItems.as_view()),
+    path('manage-psychological-task/<int:id>/', ManagePsychologialTask.as_view()),
 
     path('list-counselors/', ListCounselors.as_view()),
     path('manage-counselor/<int:pk>/', ManageCounselor.as_view()),

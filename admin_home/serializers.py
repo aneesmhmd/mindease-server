@@ -2,6 +2,7 @@ from rest_framework import serializers
 from accounts.models import Account
 from home.models import Service
 from counselor.models import CounselorProfile, CounselorExperience, CounselorEducation
+from .models import PsychologicalTasks, TaskItems
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,3 +26,19 @@ class ServicesSerializer(serializers.ModelSerializer):
         # Exclude is_active from the fields to update
         validated_data.pop('is_active', None)
         return super().update(instance, validated_data)
+
+
+class PsychologicalTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PsychologicalTasks
+        fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data.pop('is_active', None)
+        return super().create(validated_data)
+
+
+class TaskItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskItems
+        fields = '__all__'
