@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from counselor.models import CounselorProfile
+from counselor.models import CounselorAccount
 from accounts.serializers import UserRegisterSerializer
 from .serializers import UserSerializer
 from accounts.models import Account
@@ -58,7 +58,7 @@ class CounselorRegistration(APIView):
             user = serializer.save()
             user.is_staff, user.role = True, 'counselor'
             user.save()
-            CounselorProfile.objects.create(counselor=user)
+            CounselorAccount.objects.create(counselor=user)
             print('User is :', user, ' with password ', password)
 
             activation_token = generate_token()

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from accounts.models import Account
 from home.models import Service
-from counselor.models import CounselorProfile, CounselorExperience, CounselorEducation
+from counselor.models import CounselorAccount, CounselorExperience, CounselorEducation
 from .models import PsychologicalTasks, TaskItems
 
 

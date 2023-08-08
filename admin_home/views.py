@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework import serializers
 
-from counselor.models import CounselorProfile
+from counselor.models import CounselorAccount
 from .serializers import *
 from home.models import Service
 
@@ -89,6 +89,12 @@ class AddTaskItems(CreateAPIView):
 class UpdatePsychologicalTasks(UpdateAPIView):
     queryset = PsychologicalTasks.objects.all()
     serializer_class = PsychologicalTaskSerializer
+    lookup_field = 'id'
+
+
+class UpdateTaskItems(UpdateAPIView):
+    queryset = TaskItems.objects.all()
+    serializer_class = TaskItemsSerializer
     lookup_field = 'id'
 
 

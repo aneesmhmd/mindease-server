@@ -5,7 +5,7 @@ from home.models import Service
 # Create your models here.
 
 
-class CounselorProfile(models.Model):
+class CounselorAccount(models.Model):
     counselor = models.ForeignKey(Account, on_delete=models.CASCADE)
     fee = models.BigIntegerField(default=600)
     specialization = models.ForeignKey(
@@ -42,7 +42,7 @@ class CounselorExperience(models.Model):
     country = models.CharField(max_length=50)
     years_of_experience = models.BigIntegerField(null=True, blank=True)
     months_of_experience = models.IntegerField(null=True, blank=True)
-    certificate = models.ImageField(upload_to='exp_certificates')    
+    certificate = models.ImageField(upload_to='exp_certificates')
     is_verified = models.BooleanField(default=False)
 
     class Meta:

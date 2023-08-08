@@ -22,6 +22,7 @@ urlpatterns = [
     path('add-task-items/<int:id>/', AddTaskItems.as_view()),
     path('update-psychological-tasks/<int:id>/', UpdatePsychologicalTasks.as_view()),
     path('delete-psychological-tasks/<int:id>/', DeletePsychologicalTasks.as_view()),
+    path('update-task-items/<int:id>/', UpdateTaskItems.as_view()),
     path('delete-task-items/<int:id>/', DeleteTaskItems.as_view()),
     path('manage-psychological-task/<int:id>/', ManagePsychologialTask.as_view()),
 

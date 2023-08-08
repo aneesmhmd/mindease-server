@@ -2,7 +2,7 @@ import re
 from rest_framework import serializers
 from . models import Account
 from rest_framework.validators import ValidationError
-from counselor.models import CounselorProfile
+from counselor.models import CounselorAccount
 from django.forms.models import model_to_dict
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -42,7 +42,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise ValidationError('User is not active', code='inactive_user')
 
         if not user.is_admin and user.is_staff:
-            counselor = CounselorProfile.objects.get(counselor=user)
+            counselor = CounselorAccount.objects.get(counselor=user)
             token['counselor'] = model_to_dict(counselor)
 
         # Add custom claims

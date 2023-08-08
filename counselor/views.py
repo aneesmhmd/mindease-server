@@ -2,14 +2,17 @@ from django.contrib.auth import authenticate
 
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import CounselorEducationSerializer, CounselorExperienceSerializer
+
+from .serializers import *
 from accounts.serializers import UserSerializer, ProfilePictureUpdateSerializer
 from accounts.models import Account
-from .models import CounselorEducation, CounselorExperience
+from .models import CounselorEducation, CounselorExperience, CounselorAccount
 from accounts.token import create_jwt_pair_tokens
+from home.models import Service
+from home.serializers import ServicesSerializer
 
 # Create your views here.
 
@@ -24,7 +27,8 @@ class CounselorLogin(APIView):
         if user is not None:
             if user.is_active and \
                     user.is_staff and user.role == 'counselor':
-                tokens = create_jwt_pair_tokens(user)
+                counselor = CounselorAccount.objects.get(counselor=user)
+                tokens = create_jwt_pair_tokens(user,counselor)
                 response = {'message': 'Login succesfull', 'token': tokens}
                 return Response(
                     data=response,
@@ -97,16 +101,42 @@ class DeleteCounselorProfilePicture(DestroyAPIView):
     lookup_field = 'id'
 
     def perform_destroy(self, instance):
-        # Delete the profile image from the storage
         instance.profile_image.delete()
-        # Set the profile_image field to null in the database
         instance.profile_image = None
         instance.save()
 
 
+class AddCounselorAccount(CreateAPIView):
+    queryset = CounselorAccount.objects.all()
+    serializer_class = AddCounselorAccountSerializer
+
+    def perform_create(self, serializer):
+        counselor_id = self.request.data.get('counselor')
+        service_id = self.request.data.get('specialization')
+        counselor = Account.objects.get(id=counselor_id)
+        service = Service.objects.get(id=service_id)
+        serializer.save(counselor=counselor, specialization=service)
+
+
+class GetCounselorAccount(RetrieveAPIView):
+    queryset = CounselorAccount.objects.all()
+    serializer_class = CounselorAccountSerializer
+    lookup_field = 'id'
+
+
+class UpdateCounselorAccounts(UpdateAPIView):
+    queryset = CounselorAccount.objects.all()
+    serializer_class = CounselorAccountSerializer
+    lookup_field = 'id'
+
+    def perform_update(self, serializer):
+        serializer.save(is_verified=True)
+        return super().perform_update(serializer)
+
+
 class AddCounselorEducation(CreateAPIView):
     queryset = CounselorEducation.objects.all()
-    serializer_class = CounselorEducationSerializer
+    serializer_class = AddEducationSerializer
 
     def perform_create(self, serializer):
         counselor_id = self.request.data.get('counselor')
@@ -135,7 +165,7 @@ def get_educational_details(request, id):
 
 class AddCounselorExperience(CreateAPIView):
     queryset = CounselorExperience.objects.all()
-    serializer_class = CounselorExperienceSerializer
+    serializer_class = AddExperienceSerializer
 
     def perform_create(self, serializer):
         counselor_id = self.request.data.get('counselor')
@@ -160,3 +190,8 @@ def get_experience_details(request, id):
         )
     except CounselorExperience.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class ListSpecializations(ListAPIView):
+    queryset = Service.objects.all()
+    serializer_class = ServicesSerializer

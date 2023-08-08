@@ -13,4 +13,8 @@ urlpatterns = [
     path('update-profile-image/<int:id>/', UpdateCounselorProfilePicture.as_view()),
     path('remove-profile-image/<int:id>/', DeleteCounselorProfilePicture.as_view()),
     path('update-profile/<int:id>/', UpdateCounselorProfile.as_view()),
+    path('get-counselor-account/<int:id>/', GetCounselorAccount.as_view()),
+    path('add-counselor-account/<int:id>/', UpdateCounselorAccounts.as_view()),
+    path('update-counselor-account/<int:id>/', UpdateCounselorAccounts.as_view()),
+    path('list-services/', ListSpecializations.as_view()),
 ] 

@@ -8,7 +8,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, DestroyAPIView
 
 from accounts.models import Account
 from .serializers import UserSerializer
-from counselor.models import CounselorProfile, CounselorEducation, CounselorExperience
+from counselor.models import CounselorAccount, CounselorEducation, CounselorExperience
 from counselor.serializers import CounselorEducationSerializer, CounselorExperienceSerializer
 
 

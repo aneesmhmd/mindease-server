@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
-from counselor.models import CounselorProfile
+from counselor.models import CounselorAccount
 from .models import Account
 from .serializers import UserRegisterSerializer, GoogleAuthSerializer, MyTokenObtainPairSerializer
 from .token import create_jwt_pair_tokens
@@ -50,10 +50,6 @@ class UserRegistration(APIView):
             user = serializer.save()
             user.set_password(password)
             user.save()
-
-            if user.is_staff:
-                user.role = 'counselor'
-                CounselorProfile.objects.create(counselor=user)
 
             current_site = get_current_site(request)
             mail_subject = 'Please activate your account'
