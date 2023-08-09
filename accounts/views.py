@@ -34,8 +34,8 @@ def get_routes(request):
 
 @api_view(['GET'])
 def user_auth(request):
-    auth_header = request.headers.get('Authorization')
-    print('Auth header:', request.headers)
+    token = request.data.get('token')
+    print('Token is', token)
     return Response(data={'message':'success'})
 
 

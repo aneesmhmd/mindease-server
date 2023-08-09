@@ -8,11 +8,11 @@ from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from counselor.models import CounselorAccount
-from accounts.serializers import UserRegisterSerializer
+from accounts.serializers import UserRegisterSerializer, ProfilePictureUpdateSerializer
 from .serializers import UserSerializer
 from accounts.models import Account
 from .helpers import generate_token, generate_random_password
@@ -138,3 +138,48 @@ class ManageUser(APIView):
             return Response(data={'message': message}, status=status.HTTP_200_OK)
         except Account.DoesNotExist:
             return Response(data={'message': 'Invalid user'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class GetAdminProfile(RetrieveAPIView):
+    queryset = Account.objects.filter(role='admin', is_admin=True)
+    serializer_class = UserSerializer
+    lookup_field = 'id'
+
+
+class UpdateAdminProfile(UpdateAPIView):
+    queryset = Account.objects.filter(role='admin')
+    serializer_class = UserSerializer
+    lookup_field = 'id'
+
+
+class UpdateAdminProfilePicture(UpdateAPIView):
+    queryset = Account.objects.filter(role='admin')
+    serializer_class = ProfilePictureUpdateSerializer
+    lookup_field = 'id'
+
+
+class ChangeAdminPassword(APIView):
+    def post(self, request, id):
+        try:
+            user = Account.objects.get(id=id, role='admin')
+        except Account.DoesNotExist:
+            return Response(
+                data={'message': 'No active account'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        current_password = request.data.get('oldPassword')
+        new_password = request.data.get('newPassword')
+
+        if user.check_password(current_password):
+            user.set_password(new_password)
+            user.save()
+            return Response(
+                data={'message': 'Password reset succesfully'},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                data={'message': 'Invalid old password'},
+                status=status.HTTP_400_BAD_REQUEST
+            )

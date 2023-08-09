@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 from .serializers import *
 from accounts.serializers import UserSerializer, ProfilePictureUpdateSerializer
@@ -28,7 +29,7 @@ class CounselorLogin(APIView):
             if user.is_active and \
                     user.is_staff and user.role == 'counselor':
                 counselor = CounselorAccount.objects.get(counselor=user)
-                tokens = create_jwt_pair_tokens(user,counselor)
+                tokens = create_jwt_pair_tokens(user, counselor)
                 response = {'message': 'Login succesfull', 'token': tokens}
                 return Response(
                     data=response,
@@ -78,6 +79,7 @@ class ChangePassword(APIView):
 
 
 class CounselorProfile(RetrieveAPIView):
+    permission_classes = [AllowAny]
     queryset = Account.objects.filter(role='counselor')
     serializer_class = UserSerializer
     lookup_field = 'id'
@@ -122,6 +124,7 @@ class GetCounselorAccount(RetrieveAPIView):
     queryset = CounselorAccount.objects.all()
     serializer_class = CounselorAccountSerializer
     lookup_field = 'id'
+    permission_classes = [AllowAny]
 
 
 class UpdateCounselorAccounts(UpdateAPIView):
@@ -193,5 +196,6 @@ def get_experience_details(request, id):
 
 
 class ListSpecializations(ListAPIView):
+    permission_classes = [AllowAny]
     queryset = Service.objects.all()
     serializer_class = ServicesSerializer

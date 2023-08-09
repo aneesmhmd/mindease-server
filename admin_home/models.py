@@ -28,8 +28,6 @@ class PsychologicalTasks(models.Model):
 class TaskItems(models.Model):
     task = models.ForeignKey(PsychologicalTasks, on_delete=models.CASCADE)
     title = models.CharField(unique=True)
-    image = models.ImageField(upload_to='task_items/')
-    description = models.TextField()
     instructions = models.TextField()
     demo_link = models.URLField(null=True)
 

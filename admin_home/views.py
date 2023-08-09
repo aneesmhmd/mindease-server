@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -58,12 +58,17 @@ class ListPsychologicalTasks(ListAPIView):
     serializer_class = PsychologicalTaskSerializer
 
 
-class ListTaskItemsByTask(ListAPIView):
-    serializer_class = TaskItemsSerializer
+class GetPyshcologicalTaskDetails(RetrieveAPIView):
+    queryset = PsychologicalTasks.objects.all()
+    serializer_class = PsychologicalTaskSerializer
+    lookup_field = 'id'
 
-    def get_queryset(self):
-        task_id = self.kwargs['id']
-        return TaskItems.objects.filter(task__id=task_id).order_by('id')
+
+class ListTaskItems(APIView):
+    def get(self, request, id):
+        task_items = TaskItems.objects.filter(task__id=id).order_by('id')
+        serializer = TaskItemsSerializer(task_items, many=True)
+        return Response(data=serializer.data)
 
 
 class AddPsychologicalTasks(CreateAPIView):
@@ -81,8 +86,15 @@ class AddTaskItems(CreateAPIView):
     queryset = TaskItems.objects.all()
     serializer_class = TaskItemsSerializer
 
-    def perform_create(self, serializer, id):
-        task = PsychologicalTasks.objects.get(id=id)
+    def perform_create(self, serializer):
+        task_id = self.request.data.get('task')
+        try:
+            task = PsychologicalTasks.objects.get(pk=task_id)
+        except PsychologicalTasks.DoesNotExist:
+            return Response(
+                data={'message': 'Task not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
         serializer.save(task=task)
 
 
@@ -119,6 +131,7 @@ class DeletePsychologicalTasks(DestroyAPIView):
     lookup_field = 'id'
 
 
-class DeleteTaskItems(CreateAPIView):
+class DeleteTaskItems(DestroyAPIView):
     queryset = TaskItems.objects.all()
     serializer_class = TaskItemsSerializer
+    lookup_field = 'id'

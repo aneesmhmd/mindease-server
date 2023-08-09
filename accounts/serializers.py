@@ -46,9 +46,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             token['counselor'] = model_to_dict(counselor)
 
         # Add custom claims
+        token['id'] = user.id
         token['email'] = user.email
         token['role'] = user.role
         token['is_active'] = user.is_active
+        token['is_google'] = user.is_google
 
         return token
 

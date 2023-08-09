@@ -9,6 +9,7 @@ def create_jwt_pair_tokens(user: User, counselor=None):
     refresh = RefreshToken.for_user(user)
 
     refresh['email'] = user.email
+    refresh['id'] = user.id
     refresh['role'] = user.role
     refresh['is_active'] = user.is_active
 
