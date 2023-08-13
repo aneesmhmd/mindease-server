@@ -87,8 +87,7 @@ class CounselorEmailValidation(APIView):
     def get(self, request, token):
         redirect_url = config('BaseUrl')
         try:
-            validated = RandomTokenGenerator.objects.get(
-                token=token)
+            validated = RandomTokenGenerator.objects.get(token=token)
 
             '''
             If the validation coupon exists, a random password is generated 
@@ -101,12 +100,8 @@ class CounselorEmailValidation(APIView):
                 'password': password
             })
 
-            print('No error till here')
-
             result = send_mail(mail_subject, message,
                                settings.EMAIL_HOST_USER, [validated.user.email])
-            print('This reached here also')
-
             if result:
                 validated.user.is_active = True
                 validated.user.set_password(password)

@@ -6,3 +6,4 @@ from .models import *
 admin.site.register(RandomTokenGenerator)
 admin.site.register(PsychologicalTasks)
 admin.site.register(TaskItems)
+# admin.site.register(CallBackReqs)

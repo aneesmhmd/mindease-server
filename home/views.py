@@ -1,13 +1,27 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 
-from .serializers import ServicesSerializer, Service
-from counselor.serializers import CounselorAccountSerializer, CounselorAccount, CounselorEducation, CounselorEducationSerializer, CounselorExperience, CounselorExperienceSerializer
-from admin_home.serializers import PsychologicalTaskSerializer, PsychologicalTasks
+from . models import *
+
+from counselor.serializers import (
+    CounselorAccountSerializer,
+    CounselorAccount,
+    CounselorEducation,
+    CounselorEducationSerializer,
+    CounselorExperience,
+    CounselorExperienceSerializer
+)
+
+from admin_home.serializers import (
+    PsychologicalTaskSerializer,
+    PsychologicalTasks,
+    ServicesSerializer,
+    CallBackReqsSerializer,
+)
+
+
 # Create your views here.
-
-
 class GetServicesList(APIView):
     def get(self, request):
         services = Service.objects.filter(is_active=True)
@@ -51,3 +65,8 @@ class GetPsychologistDetails(RetrieveAPIView):
     queryset = CounselorAccount.objects.filter(is_verified=True)
     serializer_class = CounselorAccountSerializer
     lookup_field = 'id'
+
+
+class AddCallBackReqs(CreateAPIView):
+    queryset = CallBackReqs.objects.all()
+    serializer_class = CallBackReqsSerializer

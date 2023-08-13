@@ -13,7 +13,7 @@ from accounts.models import Account
 from .models import CounselorEducation, CounselorExperience, CounselorAccount
 from accounts.token import create_jwt_pair_tokens
 from home.models import Service
-from home.serializers import ServicesSerializer
+from admin_home.serializers import ServicesSerializer
 
 # Create your views here.
 

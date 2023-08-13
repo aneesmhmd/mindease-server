@@ -15,7 +15,6 @@ class UserProfile(RetrieveAPIView):
 
 
 class ChangePassword(APIView):
-
     def post(self, request, id):
         user = Account.objects.get(id=id, role='user', is_active=True)
         current_password = request.data.get('current_password')
@@ -47,7 +46,7 @@ class RemoveUserProfilePhoto(DestroyAPIView):
     lookup_field = 'id'
 
     def perform_destroy(self, instance):
-        # Delete the profile image from the storage
+        # Deletes the profile image from the storage
         instance.profile_image.delete()
         # Set the profile_image field to null in the database
         instance.profile_image = None

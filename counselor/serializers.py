@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from . models import Account, CounselorEducation, CounselorExperience, CounselorAccount
 from rest_framework.validators import ValidationError
-from home.serializers import ServicesSerializer
-
+from admin_home.serializers import ServicesSerializer
 
 class CounselorSerializer(serializers.ModelSerializer):
     class Meta:

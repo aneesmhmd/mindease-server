@@ -1,9 +1,7 @@
 from rest_framework import serializers
 from accounts.models import Account
-from home.models import Service
-from counselor.models import CounselorAccount, CounselorExperience, CounselorEducation
-from .models import PsychologicalTasks, TaskItems
-
+from home.models import *
+from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,4 +39,10 @@ class PsychologicalTaskSerializer(serializers.ModelSerializer):
 class TaskItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskItems
+        fields = '__all__'
+
+
+class CallBackReqsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CallBackReqs
         fields = '__all__'

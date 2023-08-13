@@ -4,18 +4,21 @@ from . views_accounts import *
 from .views_counselor import *
 
 urlpatterns = [
+
+    # views_accounts
     path('login/', AdminLogin.as_view()),
     path('add-counselor/', CounselorRegistration.as_view()),
     path('verify-counselor/<token>', CounselorEmailValidation.as_view(),
          name='verify-counselor-token'),
     path('get-admin-profile/<int:id>/', GetAdminProfile.as_view()),
     path('update-profile/<int:id>/', UpdateAdminProfile.as_view()),
-    path('update-profile-picture/<int:id>/', UpdateAdminProfilePicture.as_view()),
+    path('update-profile-picture/<int:id>/',
+         UpdateAdminProfilePicture.as_view()),
     path('change-password/<int:id>/', ChangeAdminPassword.as_view()),
-
     path('list-users/', ListUsers.as_view()),
     path('manage-user/<int:pk>/', ManageUser.as_view()),
 
+    # views
     path('add-services/', AddServices.as_view()),
     path('list-services/', ListServices.as_view()),
     path('manage-service/<int:pk>/', ManageServices.as_view()),
@@ -35,7 +38,9 @@ urlpatterns = [
     path('delete-task-items/<int:id>/', DeleteTaskItems.as_view()),
     path('manage-psychological-task/<int:id>/',
          ManagePsychologialTask.as_view()),
+    path('list-callback-reqs/', ListCallBackReqs.as_view()),
 
+    # views_counselor
     path('list-counselors/', ListCounselors.as_view()),
     path('manage-counselor/<int:pk>/', ManageCounselor.as_view()),
     path('list-education-request/', ListEducationRequests.as_view()),

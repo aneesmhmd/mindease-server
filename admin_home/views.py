@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, RetrieveAPIView
+from rest_framework.generics import (
+    ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, RetrieveAPIView)
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -135,3 +136,18 @@ class DeleteTaskItems(DestroyAPIView):
     queryset = TaskItems.objects.all()
     serializer_class = TaskItemsSerializer
     lookup_field = 'id'
+
+
+class ListCallBackReqs(ListAPIView):
+    queryset = CallBackReqs.objects.all()
+    serializer_class = CallBackReqsSerializer
+
+
+class UpdateCallBackReqs(UpdateAPIView):
+    queryset = CallBackReqs.objects.all()
+    serializer_class = CallBackReqsSerializer
+
+    def perform_update(self, serializer):
+        request = self.kwargs['id']
+        
+        return super().perform_update(serializer)
