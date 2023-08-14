@@ -39,6 +39,7 @@ urlpatterns = [
     path('manage-psychological-task/<int:id>/',
          ManagePsychologialTask.as_view()),
     path('list-callback-reqs/', ListCallBackReqs.as_view()),
+    path('update-callback-reqs/<int:pk>/', UpdateCallBackReqs.as_view()),
 
     # views_counselor
     path('list-counselors/', ListCounselors.as_view()),

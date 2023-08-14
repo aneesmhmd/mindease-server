@@ -148,6 +148,6 @@ class UpdateCallBackReqs(UpdateAPIView):
     serializer_class = CallBackReqsSerializer
 
     def perform_update(self, serializer):
-        request = self.kwargs['id']
-        
-        return super().perform_update(serializer)
+        instance = serializer.instance
+        instance.is_contacted = not instance.is_contacted
+        serializer.save()

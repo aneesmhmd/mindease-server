@@ -3,7 +3,6 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 
 from . models import *
-
 from counselor.serializers import (
     CounselorAccountSerializer,
     CounselorAccount,
@@ -12,7 +11,6 @@ from counselor.serializers import (
     CounselorExperience,
     CounselorExperienceSerializer
 )
-
 from admin_home.serializers import (
     PsychologicalTaskSerializer,
     PsychologicalTasks,
