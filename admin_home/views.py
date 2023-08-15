@@ -87,17 +87,6 @@ class AddTaskItems(CreateAPIView):
     queryset = TaskItems.objects.all()
     serializer_class = TaskItemsSerializer
 
-    def perform_create(self, serializer):
-        task_id = self.request.data.get('task')
-        try:
-            task = PsychologicalTasks.objects.get(pk=task_id)
-        except PsychologicalTasks.DoesNotExist:
-            return Response(
-                data={'message': 'Task not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        serializer.save(task=task)
-
 
 class UpdatePsychologicalTasks(UpdateAPIView):
     queryset = PsychologicalTasks.objects.all()
@@ -139,7 +128,7 @@ class DeleteTaskItems(DestroyAPIView):
 
 
 class ListCallBackReqs(ListAPIView):
-    queryset = CallBackReqs.objects.all()
+    queryset = CallBackReqs.objects.all().order_by('is_contacted','-id')
     serializer_class = CallBackReqsSerializer
 
 

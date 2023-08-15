@@ -42,6 +42,12 @@ class TaskItemsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class TaskSubscriptionSerialzer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskSubscription
+        fields = '__all__'
+
+
 class CallBackReqsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CallBackReqs

@@ -194,13 +194,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
+    config('origin_one'),
+    config('origin_two')
 ]
 
 
@@ -212,6 +212,10 @@ EMAIL_PORT = config('port')
 EMAIL_HOST_USER = config('user')
 EMAIL_HOST_PASSWORD = config('password')
 EMAIL_USE_TLS = config('tls')
+
+
+# stripe configuration
+STRIPE_SECRET_KEY = config('stripe_skey')
 
 
 # cloudinary.config = {

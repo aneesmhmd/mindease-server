@@ -91,12 +91,14 @@ def verify_experience_requests(request, id):
             status=status.HTTP_404_NOT_FOUND
         )
 
+
 class DeclineEducationRequest(DestroyAPIView):
     queryset = CounselorEducation.objects.filter(is_verified=False)
     serializer_class = CounselorEducationSerializer
     lookup_field = 'id'
 
+
 class DeclineExperienceRequest(DestroyAPIView):
-    queryset = CounselorExperience.objects.filter(is_verified = False)
+    queryset = CounselorExperience.objects.filter(is_verified=False)
     serializer_class = CounselorExperienceSerializer
     lookup_field = 'id'

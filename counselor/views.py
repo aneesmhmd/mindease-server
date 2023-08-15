@@ -141,16 +141,16 @@ class AddCounselorEducation(CreateAPIView):
     queryset = CounselorEducation.objects.all()
     serializer_class = AddEducationSerializer
 
-    def perform_create(self, serializer):
-        counselor_id = self.request.data.get('counselor')
-        try:
-            counselor = Account.objects.get(pk=counselor_id)
-        except Account.DoesNotExist:
-            return Response(
-                data={'message': 'Counselor profile not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        serializer.save(counselor=counselor)
+    # def perform_create(self, serializer):
+    #     counselor_id = self.request.data.get('counselor')
+    #     try:
+    #         counselor = Account.objects.get(pk=counselor_id)
+    #     except Account.DoesNotExist:
+    #         return Response(
+    #             data={'message': 'Counselor profile not found'},
+    #             status=status.HTTP_404_NOT_FOUND
+    #         )
+    #     serializer.save(counselor=counselor)
 
 
 @api_view(['GET'])
@@ -170,16 +170,16 @@ class AddCounselorExperience(CreateAPIView):
     queryset = CounselorExperience.objects.all()
     serializer_class = AddExperienceSerializer
 
-    def perform_create(self, serializer):
-        counselor_id = self.request.data.get('counselor')
-        try:
-            counselor = Account.objects.get(pk=counselor_id)
-        except Account.DoesNotExist:
-            return Response(
-                data={'message': 'Counselor not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        serializer.save(counselor=counselor)
+    # def perform_create(self, serializer):
+    #     counselor_id = self.request.data.get('counselor')
+    #     try:
+    #         counselor = Account.objects.get(pk=counselor_id)
+    #     except Account.DoesNotExist:
+    #         return Response(
+    #             data={'message': 'Counselor not found'},
+    #             status=status.HTTP_404_NOT_FOUND
+    #         )
+    #     serializer.save(counselor=counselor)
 
 
 @api_view(['GET'])

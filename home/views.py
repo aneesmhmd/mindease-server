@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework import status
 
 from . models import *
 from counselor.serializers import (
@@ -16,7 +17,14 @@ from admin_home.serializers import (
     PsychologicalTasks,
     ServicesSerializer,
     CallBackReqsSerializer,
+    TaskSubscriptionSerialzer
 )
+
+from django.conf import settings
+from decouple import config
+
+import stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 # Create your views here.
@@ -59,10 +67,54 @@ class ListPsychologicalTasks(ListAPIView):
     serializer_class = PsychologicalTaskSerializer
 
 
+class GetPsychologicalTaskDetails(RetrieveAPIView):
+    queryset = PsychologicalTasks.objects.filter(is_active=True)
+    serializer_class = PsychologicalTaskSerializer
+    lookup_field = 'id'
+
+
 class GetPsychologistDetails(RetrieveAPIView):
     queryset = CounselorAccount.objects.filter(is_verified=True)
     serializer_class = CounselorAccountSerializer
     lookup_field = 'id'
+
+
+class SubscriptionCheckoutSession(APIView):
+    def post(self, request):
+        data = request.data
+        title = data['title']
+        price = int(data['amount']) * 100
+        image = [data['image']]
+        task_id = data['taskId']
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                line_items=[{
+                    'price_data': {
+                        'currency': 'INR',
+                        'product_data': {
+                            'name': title,
+                            'images': image
+                        },
+                        'unit_amount': price,
+                    },
+                    'quantity': 1
+                }],
+                mode='payment',
+                success_url=config('success_url')+'?task=' + str(task_id) + '&amount_paid=' + str   (data['amount']),
+                cancel_url=config('cancel_url')
+            )
+            return Response(data=checkout_session.url)
+        except Exception as e:
+            print(e)
+            return Response(data={'message': 'Oops!Some error occured!'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class CreateTaskSubscription(CreateAPIView):
+    queryset = TaskSubscription.objects.all()
+    serializer_class = TaskSubscriptionSerialzer
+
+    def perform_create(self, serializer):
+        serializer.save(is_paid=True)
+        return super().perform_create(serializer)
 
 
 class AddCallBackReqs(CreateAPIView):

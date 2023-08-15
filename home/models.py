@@ -1,5 +1,6 @@
 from django.db import models
-
+from accounts.models import Account
+from admin_home.models import PsychologicalTasks
 # Create your models here.
 
 
@@ -23,3 +24,15 @@ class CallBackReqs(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+
+class TaskSubscription(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
+    task = models.ForeignKey(PsychologicalTasks, on_delete=models.SET_NULL, null=True)
+    amount_paid = models.PositiveBigIntegerField()
+    date = models.DateField(auto_now_add=True)
+    is_paid = models.BooleanField(default=False)
+    is_expired = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.task.title
