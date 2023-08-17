@@ -4,6 +4,7 @@ from .views import *
 
 urlpatterns = [
     path('login/',CounselorLogin.as_view()),
+    path('is-counselor-auth/<int:id>/',IsCounselorAuth.as_view()),
     path('change-password/<int:id>/',ChangePassword.as_view()),
     path('counselor-profile/<int:id>/', CounselorProfile.as_view()),
     path('add-education/', AddCounselorEducation.as_view()),

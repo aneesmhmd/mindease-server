@@ -7,6 +7,7 @@ urlpatterns = [
 
     # views_accounts
     path('login/', AdminLogin.as_view()),
+    path('is-admin-auth/<int:id>/', IsAdminAuth.as_view()),
     path('add-counselor/', CounselorRegistration.as_view()),
     path('verify-counselor/<token>', CounselorEmailValidation.as_view(),
          name='verify-counselor-token'),
@@ -38,6 +39,7 @@ urlpatterns = [
     path('delete-task-items/<int:id>/', DeleteTaskItems.as_view()),
     path('manage-psychological-task/<int:id>/',
          ManagePsychologialTask.as_view()),
+    path('list-task-subscriptions/', ListTaskSubscriptions.as_view()),
     path('list-callback-reqs/', ListCallBackReqs.as_view()),
     path('update-callback-reqs/<int:pk>/', UpdateCallBackReqs.as_view()),
 

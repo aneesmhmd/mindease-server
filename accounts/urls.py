@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path('', views.get_routes),
-    path('user-auth/', views.user_auth, name='user-auth'),
+    path('is-user-auth/<int:id>/', views.IsUserAuth.as_view(), name='user-auth'),
     path('register/', UserRegistration.as_view()),
     # path('login/', MyTokenObtainPairView.as_view()),
     path('activate/<uidb64>/<token> ', views.activate, name='activate'),

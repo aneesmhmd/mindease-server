@@ -115,6 +115,11 @@ class ManagePsychologialTask(APIView):
             return Response(data={'message': 'Invalid user'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class ListTaskSubscriptions(ListAPIView):
+    queryset = TaskSubscription.objects.all().order_by('id')
+    serializer_class = TaskSubscriptionSerialzer
+
+
 class DeletePsychologicalTasks(DestroyAPIView):
     queryset = PsychologicalTasks.objects.all()
     serializer_class = PsychologicalTaskSerializer
@@ -128,7 +133,7 @@ class DeleteTaskItems(DestroyAPIView):
 
 
 class ListCallBackReqs(ListAPIView):
-    queryset = CallBackReqs.objects.all().order_by('is_contacted','-id')
+    queryset = CallBackReqs.objects.all().order_by('is_contacted', '-id')
     serializer_class = CallBackReqsSerializer
 
 

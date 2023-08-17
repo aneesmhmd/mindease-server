@@ -32,17 +32,19 @@ def get_routes(request):
     return Response(routes)
 
 
-@api_view(['GET'])
-def user_auth(request):
-    token = request.data.get('token')
-    print('Token is', token)
-    return Response(data={'message':'success'})
+class IsUserAuth(APIView):
+    def get(self, request, id):
+        try:
+            user = Account.objects.get(id=id, is_active=True)
+            return Response(data={'success': True}, status=status.HTTP_200_OK)
+        except Account.DoesNotExist:
+            return Response(data={'failure': False}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserRegistration(APIView):
     def post(self, request):
         email = request.data.get('email')
-        password =request.data.get('password')
+        password = request.data.get('password')
 
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -58,7 +60,7 @@ class UserRegistration(APIView):
                 'domain': current_site,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': default_token_generator.make_token(user),
-                'cite' : current_site
+                'cite': current_site
             })
             to_email = email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
@@ -66,7 +68,7 @@ class UserRegistration(APIView):
 
             return Response({'status': 'success', 'msg': 'A verificaiton link sent to your registered email address', "data": serializer.data})
         else:
-            print('Serializer errors are :',serializer.errors)
+            print('Serializer errors are :', serializer.errors)
             return Response({'status': 'error', 'msg': serializer.errors})
 
 
@@ -88,7 +90,6 @@ def activate(request, uidb64, token):
         redirect_url = 'http://localhost:5173/login/' + '?message=' + message
 
     return HttpResponseRedirect(redirect_url)
-
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -145,9 +146,18 @@ class ForgotPassword(APIView):
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
 
-            return Response({'status': 'success', 'msg': 'Please reset password by verifying the link', 'user_id': user.id})
+            return Response(
+                data={
+                    'message': 'Password reset email send',
+                    'user_id': user.id
+                },
+                status=status.HTTP_200_OK
+            )
         else:
-            return Response({'status': 'error', 'msg': 'No account registered with this email'})
+            return Response(
+                data={'message': 'No account found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
 @api_view(['GET'])
@@ -159,7 +169,7 @@ def reset_validate(request, uidb64, token):
         user = None
 
     if user is not None and default_token_generator.check_token(user, token):
-       
+
         return HttpResponseRedirect(f'http://localhost:5173/reset-password/')
 
 
@@ -174,9 +184,9 @@ class ResetPassword(APIView):
             user.set_password(password)
             user.save()
 
-            return Response({'msg': 'Password reset succesfully'})
+            return Response(data={'message': 'Password reset succesfully'}, status=status.HTTP_200_OK)
 
-        return HttpResponseRedirect('http://localhost:5173/login/')
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 class UpdateUserProfile(UpdateAPIView):
     queryset = Account.objects.all()

@@ -1,15 +1,24 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status,generics
 from django.conf  import settings
 from decouple import config
+
+from .models import *
+from .serializers import *
 
 import stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # Create your views here.
+class CreateSlots(generics.CreateAPIView):
+    queryset = TimeSlots.objects.all()
+    serializer_class = TimeSlotSerializer
 
+    def perform_create(self, serializer):
+        start = self.request.data.get('start')
+        return super().perform_create(serializer)
 
 class BookingCheckoutSession(APIView):
     def post(self, request):

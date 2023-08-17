@@ -8,6 +8,8 @@ urlpatterns = [
     path('get-psychological-task/<int:id>/',GetPsychologicalTaskDetails.as_view()),
     path('task-subscription-checkout-session/',SubscriptionCheckoutSession.as_view()),
     path('create-task-subscription/',CreateTaskSubscription.as_view()),
+    path('get-subscribed-tasks/<int:user_id>/',ListSubscribedTasks.as_view()),
+    path('get-subscribed-task-items/<int:user_id>/<int:sub_id>/',ListSubscribedTaskItems.as_view()),
     path('get-counselor-profile/<int:id>/',GetCounselorProfile.as_view()),
     path('get-counselor-education/<int:id>/',GetCounselorEducations.as_view()),
     path('get-counselor-experience/<int:id>/',GetCounselorExperience.as_view()),

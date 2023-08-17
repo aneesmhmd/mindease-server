@@ -3,10 +3,17 @@ from accounts.models import Account
 from counselor.models import CounselorAccount
 
 # Create your models here.
-class Slots(models.Model):
-    slot = models.CharField(max_length=20)
+
+
+class TimeSlots(models.Model):
+    counselor = models.ForeignKey(CounselorAccount, on_delete=models.CASCADE)
+    start = models.TimeField()
+    end = models.TimeField()
+    is_booked = models.BooleanField(default=False)
+
     def __str__(self):
-        self.slot
+        return str(self.start)
+
 
 class AppointmentPayments(models.Model):
     user = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
@@ -19,9 +26,18 @@ class AppointmentPayments(models.Model):
 
 
 class Appointments(models.Model):
+    STATUS_CHOICES = (
+        ('Attended', 'Attended'),
+        ('Not attended', 'Not attended'),
+        ('Pending', 'Pending')
+    )
     user = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
-    counselor = models.ForeignKey(CounselorAccount, on_delete=models.DO_NOTHING)
-    slot = models.ForeignKey(Slots, on_delete=models.DO_NOTHING)
-    date = models.DateField()
-    payment = models.ForeignKey(AppointmentPayments, on_delete=models.DO_NOTHING)
-    status = models.CharField(max_length=20)
+    counselor = models.ForeignKey(
+        CounselorAccount, on_delete=models.DO_NOTHING)
+    slot = models.ForeignKey(TimeSlots, on_delete=models.DO_NOTHING)
+    session_date = models.DateField()
+    amount_paid = models.PositiveBigIntegerField(default=200)
+    is_paid = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)
+    status = models.CharField(
+        max_length=20, default='Pending', choices=STATUS_CHOICES)

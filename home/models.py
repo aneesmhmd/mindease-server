@@ -30,7 +30,9 @@ class TaskSubscription(models.Model):
     user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
     task = models.ForeignKey(PsychologicalTasks, on_delete=models.SET_NULL, null=True)
     amount_paid = models.PositiveBigIntegerField()
-    date = models.DateField(auto_now_add=True)
+    validity = models.PositiveBigIntegerField()
+    subscribed_date = models.DateField(auto_now_add=True)
+    expiry_date = models.DateField(null=True)   
     is_paid = models.BooleanField(default=False)
     is_expired = models.BooleanField(default=False)
 

@@ -19,6 +19,7 @@ from admin_home.serializers import ServicesSerializer
 
 
 class CounselorLogin(APIView):
+
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
@@ -37,7 +38,7 @@ class CounselorLogin(APIView):
                 )
 
             else:
-                response = {'message': 'You are not a counselor'}
+                response = {'message': 'Unauthorized user'}
                 return Response(
                     data=response,
                     status=status.HTTP_401_UNAUTHORIZED
@@ -51,7 +52,19 @@ class CounselorLogin(APIView):
             )
 
 
+class IsCounselorAuth(APIView):
+
+    def get(self, request, id):
+        try:
+            counselor = Account.objects.get(
+                id=id, is_active=True, role='counselor')
+            return Response(data={'success': True}, status=status.HTTP_200_OK)
+        except Account.DoesNotExist:
+            return Response(data={'failure': False}, status=status.HTTP_401_UNAUTHORIZED)
+
+
 class ChangePassword(APIView):
+
     def post(self, request, id):
         try:
             user = Account.objects.get(id=id, role='counselor', is_active=True)
@@ -140,17 +153,6 @@ class UpdateCounselorAccounts(UpdateAPIView):
 class AddCounselorEducation(CreateAPIView):
     queryset = CounselorEducation.objects.all()
     serializer_class = AddEducationSerializer
-
-    # def perform_create(self, serializer):
-    #     counselor_id = self.request.data.get('counselor')
-    #     try:
-    #         counselor = Account.objects.get(pk=counselor_id)
-    #     except Account.DoesNotExist:
-    #         return Response(
-    #             data={'message': 'Counselor profile not found'},
-    #             status=status.HTTP_404_NOT_FOUND
-    #         )
-    #     serializer.save(counselor=counselor)
 
 
 @api_view(['GET'])

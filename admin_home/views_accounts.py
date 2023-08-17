@@ -49,17 +49,27 @@ class AdminLogin(APIView):
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
+class IsAdminAuth(APIView):
+    def get(self, request, id):
+        try:
+            counselor = Account.objects.get(
+                id=id, is_active=True, role='admin')
+            return Response(data={'success': True}, status=status.HTTP_200_OK)
+        except Account.DoesNotExist:
+            return Response(data={'failure': False}, status=status.HTTP_404_NOT_FOUND)
+
+
 class CounselorRegistration(APIView):
     def post(self, request):
-        serializer = UserRegisterSerializer(data=request.data)
-        password = request.data.get('password')
+        serializer = UserSerializer(data=request.data)
+        email = request.data.get('email')
         if serializer.is_valid(raise_exception=True):
 
             user = serializer.save()
             user.is_staff, user.role = True, 'counselor'
+            user.set_password(email)
             user.save()
             CounselorAccount.objects.create(counselor=user)
-            print('User is :', user, ' with password ', password)
 
             activation_token = generate_token()
             print('This is our token:', activation_token)
@@ -79,8 +89,8 @@ class CounselorRegistration(APIView):
                 RandomTokenGenerator.objects.create(
                     token=activation_token, user=user)
 
-                return Response({'msg': 'Counselor added succesfully!', 'status': 200})
-        return Response({'msg': 'Oops! Registration failed'})
+                return Response(data={'message': 'Counselor added succesfully!'}, status=status.HTTP_201_CREATED)
+        return Response(data={'message': 'Oops! Registration failed!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CounselorEmailValidation(APIView):

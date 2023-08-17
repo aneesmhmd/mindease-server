@@ -2,8 +2,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework import status
+from rest_framework.validators import ValidationError
+from datetime import datetime, timedelta
 
 from . models import *
+from . serializers import *
 from counselor.serializers import (
     CounselorAccountSerializer,
     CounselorAccount,
@@ -17,7 +20,7 @@ from admin_home.serializers import (
     PsychologicalTasks,
     ServicesSerializer,
     CallBackReqsSerializer,
-    TaskSubscriptionSerialzer
+    TaskSubscriptionSerialzer,
 )
 
 from django.conf import settings
@@ -86,6 +89,7 @@ class SubscriptionCheckoutSession(APIView):
         price = int(data['amount']) * 100
         image = [data['image']]
         task_id = data['taskId']
+        task = PsychologicalTasks.objects.get(id=task_id)
         try:
             checkout_session = stripe.checkout.Session.create(
                 line_items=[{
@@ -100,21 +104,57 @@ class SubscriptionCheckoutSession(APIView):
                     'quantity': 1
                 }],
                 mode='payment',
-                success_url=config('success_url')+'?task=' + str(task_id) + '&amount_paid=' + str   (data['amount']),
+                success_url=config('success_url')+'?task=' + str(task_id) + '&amount_paid=' + str(
+                    data['amount']) + '&validity=' + str(task.validity),
                 cancel_url=config('cancel_url')
             )
             return Response(data=checkout_session.url)
         except Exception as e:
             print(e)
-            return Response(data={'message': 'Oops!Some error occured!'}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                data={'message': 'Oops!Some error occured!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
 class CreateTaskSubscription(CreateAPIView):
     queryset = TaskSubscription.objects.all()
-    serializer_class = TaskSubscriptionSerialzer
+    serializer_class = CreateTaskSubscriptionSerializer
 
     def perform_create(self, serializer):
-        serializer.save(is_paid=True)
-        return super().perform_create(serializer)
+        task = self.request.data.get('task')
+        user = self.request.data.get('user')
+        try:
+            TaskSubscription.objects.get(task__id=task, user__id=user)
+            raise ValidationError('Already subscribed')
+        except TaskSubscription.DoesNotExist:
+            days_to_add = serializer.validated_data.get('validity')
+            expiry_date = datetime.now().date() + timedelta(days_to_add)
+            serializer.save(is_paid=True, expiry_date=expiry_date)
+            return super().perform_create(serializer)
+
+
+class ListSubscribedTasks(APIView):
+
+    def get(self, request, user_id):
+        subscribed = TaskSubscription.objects.filter(user__id=user_id)
+        serializer = TaskSubscriptionSerialzer(subscribed, many=True)
+        return Response(data=serializer.data)
+
+
+class ListSubscribedTaskItems(APIView):
+
+    def get(self, request, user_id, sub_id):
+        try:
+            subscribed = TaskSubscription.objects.get(
+                id=sub_id, user__id=user_id, is_expired=False)
+            task = subscribed.task
+            task_items = TaskItems.objects.filter(task=task)
+            serializer = RetrieveTaskItemsSerializer(task_items, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        except TaskSubscription.DoesNotExist:
+            return ValidationError('No active subscription found')
 
 
 class AddCallBackReqs(CreateAPIView):

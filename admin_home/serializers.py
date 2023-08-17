@@ -43,6 +43,8 @@ class TaskItemsSerializer(serializers.ModelSerializer):
 
 
 class TaskSubscriptionSerialzer(serializers.ModelSerializer):
+    task = PsychologicalTaskSerializer()
+    user = UserSerializer()
     class Meta:
         model = TaskSubscription
         fields = '__all__'

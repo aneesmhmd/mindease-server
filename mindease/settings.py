@@ -58,8 +58,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    # 'PAGE_SIZE': 2
 }
 
 
@@ -144,7 +142,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('NAME'),
-        'USER': 'postgres',
+        'USER': config('DB_USER'),
         'PASSWORD': config('PASSWORD'),
         'HOST': config('HOST'),
     }
