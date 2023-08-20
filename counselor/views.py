@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate
-
+import datetime
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, ListAPIView
@@ -10,7 +10,9 @@ from rest_framework.permissions import AllowAny
 from .serializers import *
 from accounts.serializers import UserSerializer, ProfilePictureUpdateSerializer
 from accounts.models import Account
-from .models import CounselorEducation, CounselorExperience, CounselorAccount
+from .models import *
+from booking.models import TimeSlots
+from booking.serializers import TimeSlotSerializer
 from accounts.token import create_jwt_pair_tokens
 from home.models import Service
 from admin_home.serializers import ServicesSerializer
@@ -30,7 +32,7 @@ class CounselorLogin(APIView):
             if user.is_active and \
                     user.is_staff and user.role == 'counselor':
                 counselor = CounselorAccount.objects.get(counselor=user)
-                tokens = create_jwt_pair_tokens(user, counselor)
+                tokens = create_jwt_pair_tokens(user, counselor.id)
                 response = {'message': 'Login succesfull', 'token': tokens}
                 return Response(
                     data=response,
@@ -172,17 +174,6 @@ class AddCounselorExperience(CreateAPIView):
     queryset = CounselorExperience.objects.all()
     serializer_class = AddExperienceSerializer
 
-    # def perform_create(self, serializer):
-    #     counselor_id = self.request.data.get('counselor')
-    #     try:
-    #         counselor = Account.objects.get(pk=counselor_id)
-    #     except Account.DoesNotExist:
-    #         return Response(
-    #             data={'message': 'Counselor not found'},
-    #             status=status.HTTP_404_NOT_FOUND
-    #         )
-    #     serializer.save(counselor=counselor)
-
 
 @api_view(['GET'])
 def get_experience_details(request, id):
@@ -201,3 +192,56 @@ class ListSpecializations(ListAPIView):
     permission_classes = [AllowAny]
     queryset = Service.objects.all()
     serializer_class = ServicesSerializer
+
+
+class ListSlots(APIView):
+    def post(self, request, id):
+        print('-------------request dataa----------', request.data)
+        date = request.data.get('selectedDate')
+        print('----------date-----------', date)
+        slot_date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+        slots = TimeSlots.objects.filter(counselor__id=id, date=date)
+        if slots.exists():
+            serializer = TimeSlotSerializer(slots, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                data={'message': 'No slots on the selected date'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class AddSlots(APIView):
+    def post(self, request, id):
+        try:
+            counselor = CounselorAccount.objects.get(id=id)
+            date = request.data.get('selectedDate')
+            time_slots = request.data.get('selectedTime')
+            slot_date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+
+            if TimeSlots.objects.filter(date=slot_date).exists():
+                return Response(
+                    data={'message': 'You have already added slots for selected date'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            slots = []
+            for i in time_slots:
+                slot_time = datetime.datetime.strptime(i, "%H:%M").time()
+                slot = TimeSlots(
+                    counselor=counselor,
+                    date=slot_date,
+                    start=slot_time,
+                )
+                slots.append(slot)
+            TimeSlots.objects.bulk_create(slots)
+            return Response(
+                data={'message': 'Slots added successfully'},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            print('---Exception--------\n', e)
+            return Response(
+                data={'message': 'Some error occured.Please try again!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )

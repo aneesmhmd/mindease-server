@@ -1,18 +1,28 @@
 from django.db import models
 from accounts.models import Account
 from counselor.models import CounselorAccount
+import datetime
 
 # Create your models here.
 
 
 class TimeSlots(models.Model):
     counselor = models.ForeignKey(CounselorAccount, on_delete=models.CASCADE)
+    date = models.DateField()
     start = models.TimeField()
-    end = models.TimeField()
+    end = models.TimeField(null=True)
     is_booked = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.start)
+
+    def save(self, *args, **kwargs):
+        if self.start and not self.end:
+            duration = datetime.timedelta(hours=1)
+            self.end = (datetime.datetime.combine(
+                datetime.date.min, self.start) + duration).time()
+
+        super(TimeSlots, self).save(*args, **kwargs)
 
 
 class AppointmentPayments(models.Model):

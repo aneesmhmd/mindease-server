@@ -18,4 +18,6 @@ urlpatterns = [
     path('add-counselor-account/<int:id>/', UpdateCounselorAccounts.as_view()),
     path('update-counselor-account/<int:id>/', UpdateCounselorAccounts.as_view()),
     path('list-services/', ListSpecializations.as_view()),
+    path('list-time-slots/<int:id>/', ListSlots.as_view()),
+    path('add-time-slots/<int:id>/', AddSlots.as_view()),
 ] 

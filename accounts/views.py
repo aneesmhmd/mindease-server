@@ -68,7 +68,6 @@ class UserRegistration(APIView):
 
             return Response({'status': 'success', 'msg': 'A verificaiton link sent to your registered email address', "data": serializer.data})
         else:
-            print('Serializer errors are :', serializer.errors)
             return Response({'status': 'error', 'msg': serializer.errors})
 
 

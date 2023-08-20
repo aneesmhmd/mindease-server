@@ -14,7 +14,7 @@ def create_jwt_pair_tokens(user: User, counselor=None):
     refresh['is_active'] = user.is_active
 
     if counselor is not None:
-        refresh['counselor'] = counselor.id
+        refresh['counselor'] = counselor
         
     tokens = {
         "access": str(refresh.access_token),
