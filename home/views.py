@@ -7,13 +7,15 @@ from datetime import datetime, timedelta
 
 from . models import *
 from . serializers import *
+from booking.models import TimeSlots
+from booking.serializers import TimeSlotSerializer
 from counselor.serializers import (
     CounselorAccountSerializer,
     CounselorAccount,
     CounselorEducation,
     CounselorEducationSerializer,
     CounselorExperience,
-    CounselorExperienceSerializer
+    CounselorExperienceSerializer,
 )
 from admin_home.serializers import (
     PsychologicalTaskSerializer,
@@ -104,9 +106,9 @@ class SubscriptionCheckoutSession(APIView):
                     'quantity': 1
                 }],
                 mode='payment',
-                success_url=config('success_url')+'?task=' + str(task_id) + '&amount_paid=' + str(
+                success_url=config('task_success_url')+'?task=' + str(task_id) + '&amount_paid=' + str(
                     data['amount']) + '&validity=' + str(task.validity),
-                cancel_url=config('cancel_url')
+                cancel_url=config('task_cancel_url')
             )
             return Response(data=checkout_session.url)
         except Exception as e:

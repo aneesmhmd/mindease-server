@@ -9,9 +9,32 @@ from rest_framework import serializers
 from counselor.models import CounselorAccount
 from .serializers import *
 from home.models import Service
+from booking.models import *
+from booking.serializers import *
 
 
 # Create your views here.
+class DashboardView(APIView):
+    def get(self, request, format=None):
+        users_count = Account.objects.filter(role='user').count()
+        counselors_count = CounselorAccount.objects.all().count()
+        services_count = Service.objects.all().count()
+        tasks_count = PsychologicalTasks.objects.all().count()
+        subscriptions_count = TaskSubscription.objects.all().count()
+        appointments_count = Appointments.objects.all().count()
+
+        data = {
+            'users': users_count,
+            'counselors': counselors_count,
+            'services': services_count,
+            'tasks': tasks_count,
+            'subscriptions': subscriptions_count,
+            'appointments': appointments_count
+        }
+
+        return Response(data)
+
+
 class AddServices(CreateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServicesSerializer
@@ -145,3 +168,8 @@ class UpdateCallBackReqs(UpdateAPIView):
         instance = serializer.instance
         instance.is_contacted = not instance.is_contacted
         serializer.save()
+
+
+class ListAllAppointments(ListAPIView):
+    queryset = Appointments.objects.all()
+    serializer_class = AppointmentSerializer

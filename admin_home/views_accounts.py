@@ -90,7 +90,7 @@ class CounselorRegistration(APIView):
                     token=activation_token, user=user)
 
                 return Response(data={'message': 'Counselor added succesfully!'}, status=status.HTTP_201_CREATED)
-        return Response(data={'message': 'Oops! Registration failed!'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class CounselorEmailValidation(APIView):

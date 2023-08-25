@@ -11,8 +11,8 @@ from .serializers import *
 from accounts.serializers import UserSerializer, ProfilePictureUpdateSerializer
 from accounts.models import Account
 from .models import *
-from booking.models import TimeSlots
-from booking.serializers import TimeSlotSerializer
+from booking.models import *
+from booking.serializers import *
 from accounts.token import create_jwt_pair_tokens
 from home.models import Service
 from admin_home.serializers import ServicesSerializer
@@ -196,17 +196,14 @@ class ListSpecializations(ListAPIView):
 
 class ListSlots(APIView):
     def post(self, request, id):
-        print('-------------request dataa----------', request.data)
         date = request.data.get('selectedDate')
-        print('----------date-----------', date)
-        slot_date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
         slots = TimeSlots.objects.filter(counselor__id=id, date=date)
         if slots.exists():
             serializer = TimeSlotSerializer(slots, many=True)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(
-                data={'message': 'No slots on the selected date'},
+                data={'message': 'Not found!'},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -219,7 +216,7 @@ class AddSlots(APIView):
             time_slots = request.data.get('selectedTime')
             slot_date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
 
-            if TimeSlots.objects.filter(date=slot_date).exists():
+            if TimeSlots.objects.filter(counselor=counselor, date=slot_date).exists():
                 return Response(
                     data={'message': 'You have already added slots for selected date'},
                     status=status.HTTP_400_BAD_REQUEST
@@ -227,21 +224,77 @@ class AddSlots(APIView):
 
             slots = []
             for i in time_slots:
-                slot_time = datetime.datetime.strptime(i, "%H:%M").time()
+                slot_start = datetime.datetime.strptime(i, "%H:%M").time()
+                slot_end = (datetime.datetime.combine(datetime.date(
+                    1, 1, 1), slot_start) + datetime.timedelta(hours=1)).time()
                 slot = TimeSlots(
                     counselor=counselor,
                     date=slot_date,
-                    start=slot_time,
+                    start=slot_start,
+                    end=slot_end,
                 )
                 slots.append(slot)
+
             TimeSlots.objects.bulk_create(slots)
             return Response(
                 data={'message': 'Slots added successfully'},
                 status=status.HTTP_200_OK
             )
+
         except Exception as e:
             print('---Exception--------\n', e)
             return Response(
                 data={'message': 'Some error occured.Please try again!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class ListAllAppointments(APIView):
+    def get(self, request, id):
+        current_date = datetime.datetime.now().date()
+        appointments = Appointments.objects.filter(
+            counselor__id=id, session_date=current_date)
+        serializer = AppointmentSerializer(appointments, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class ShareMeetLink(CreateAPIView):
+    queryset = MeetLink.objects.all()
+    serializer_class = MeetLinkSerializer
+
+
+class ListAppointmentByDate(APIView):
+    def get(self, request, id, date):
+        appointments = Appointments.objects.filter(
+            counselor__id=id, session_date=date)
+
+        if appointments.exists():
+            serializer = AppointmentSerializer(appointments, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        return Response(
+            data={'message': 'No appointments on the selected date'},
+            status=status.HTTP_200_OK
+        )
+
+
+class UpdateAppointmentStatus(APIView):
+    def patch(self, request, id):
+        try:
+            app_status = request.data.get('status')
+            appointment = Appointments.objects.get(id=id, status='Pending')
+            appointment.status = app_status
+            appointment.save()
+
+            link = MeetLink.objects.get(appointment=appointment)
+            link.delete()
+            return Response(status=status.HTTP_200_OK)
+        
+        except Appointments.DoesNotExist:
+            return Response(
+                data={'message': 'Appointment not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except MeetLink.DoesNotExist:
+            return Response(status=status.HTTP_200_OK)

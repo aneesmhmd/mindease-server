@@ -192,15 +192,21 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 
-# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 
 CORS_ALLOWED_ORIGINS = [
     config('origin_one'),
-    config('origin_two')
+    config('origin_two'),
+    config('origin_three')
 ]
 
+CORS_ORIGIN_WHITELIST = [
+    config('origin_one'),
+    config('origin_two'),
+    config('origin_three')
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -211,15 +217,5 @@ EMAIL_HOST_USER = config('user')
 EMAIL_HOST_PASSWORD = config('password')
 EMAIL_USE_TLS = config('tls')
 
-
 # stripe configuration
 STRIPE_SECRET_KEY = config('stripe_skey')
-
-
-# cloudinary.config = {
-#     'cloud_name': 'dprttm3jj',
-#     'api_key': '476657165165615',
-#     'api_secret': 'OLFO3ExqOnxJovI-sbwBjaB2T7M',
-# }
-
-# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

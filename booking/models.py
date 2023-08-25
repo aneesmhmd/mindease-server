@@ -46,8 +46,19 @@ class Appointments(models.Model):
         CounselorAccount, on_delete=models.DO_NOTHING)
     slot = models.ForeignKey(TimeSlots, on_delete=models.DO_NOTHING)
     session_date = models.DateField()
-    amount_paid = models.PositiveBigIntegerField(default=200)
+    amount_paid = models.PositiveBigIntegerField(null=True)
     is_paid = models.BooleanField(default=False)
-    is_approved = models.BooleanField(default=False)
+    is_rescheduled = models.BooleanField(default=False)
     status = models.CharField(
         max_length=20, default='Pending', choices=STATUS_CHOICES)
+    
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name}'
+
+class MeetLink(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    appointment = models.ForeignKey(Appointments, on_delete=models.CASCADE)
+    link = models.URLField()
+
+    def __str__(self):
+        return str(self.link)

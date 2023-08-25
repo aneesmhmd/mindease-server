@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from . models import Account, CounselorEducation, CounselorExperience, CounselorAccount
 from rest_framework.validators import ValidationError
+from booking.models import Appointments
 from admin_home.serializers import ServicesSerializer
 
 class CounselorSerializer(serializers.ModelSerializer):
@@ -51,3 +52,9 @@ class CounselorEducationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CounselorEducation
         fields = '__all__'
+
+
+class UpdateAppointmentStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointments
+        fields = ['status']

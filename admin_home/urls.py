@@ -20,6 +20,7 @@ urlpatterns = [
     path('manage-user/<int:pk>/', ManageUser.as_view()),
 
     # views
+    path('dashboard-view/',DashboardView.as_view()),
     path('add-services/', AddServices.as_view()),
     path('list-services/', ListServices.as_view()),
     path('manage-service/<int:pk>/', ManageServices.as_view()),
@@ -42,6 +43,7 @@ urlpatterns = [
     path('list-task-subscriptions/', ListTaskSubscriptions.as_view()),
     path('list-callback-reqs/', ListCallBackReqs.as_view()),
     path('update-callback-reqs/<int:pk>/', UpdateCallBackReqs.as_view()),
+    path('list-all-appointments/', ListAllAppointments.as_view()),
 
     # views_counselor
     path('list-counselors/', ListCounselors.as_view()),

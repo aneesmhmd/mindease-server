@@ -1,0 +1,9 @@
+Django
+django-cors-headers
+djangorestframework
+djangorestframework-simplejwt
+Pillow
+psycopg2
+python-decouple
+gunicorn
+stripe

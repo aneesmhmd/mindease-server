@@ -20,4 +20,8 @@ urlpatterns = [
     path('list-services/', ListSpecializations.as_view()),
     path('list-time-slots/<int:id>/', ListSlots.as_view()),
     path('add-time-slots/<int:id>/', AddSlots.as_view()),
+    path('list-all-appointments/<int:id>/', ListAllAppointments.as_view()),
+    path('list-appointments-by-date/<int:id>/<str:date>/', ListAppointmentByDate.as_view()),
+    path('update-appointment-status/<int:id>/', UpdateAppointmentStatus.as_view()),
+    path('share-meet-link/', ShareMeetLink.as_view()),
 ] 
