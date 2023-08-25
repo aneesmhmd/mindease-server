@@ -164,6 +164,9 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# Ignore settings.py inside the mindease folder
+mindease/settings.py
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
@@ -173,3 +176,4 @@ cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
 constants.txt
+requirements.txt
