@@ -57,7 +57,7 @@ class UserRegistration(APIView):
             user.set_password(password)
             user.save()
 
-            current_site = config('BaseUrl')
+            current_site = get_current_site(request)
             mail_subject = 'Please activate your account'
             message = render_to_string('user/account_verification.html', {
                 'user': user,
@@ -137,7 +137,7 @@ class ForgotPassword(APIView):
         if Account.objects.filter(email=email).exists():
             user = Account.objects.get(email__exact=email)
 
-            current_site = config('BaseUrl')
+            current_site = get_current_site(request)
             mail_subject = 'Please reset your password'
             message = render_to_string('user/reset_password.html', {
                 'user': user,
