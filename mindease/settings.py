@@ -207,15 +207,15 @@ CORS_ALLOW_METHODS = (
 )
 
 CORS_ALLOWED_ORIGINS = [
+    'https://mindeaseonline.netlify.app',
     config('origin_one'),
     config('origin_two'),
-    config('origin_three')
 ]
 
 CORS_ORIGIN_WHITELIST = [
+    'https://mindeaseonline.netlify.app',
     config('origin_one'),
     config('origin_two'),
-    config('origin_three')
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
