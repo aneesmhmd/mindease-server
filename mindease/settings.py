@@ -196,6 +196,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+)
 
 CORS_ALLOWED_ORIGINS = [
     config('origin_one'),
