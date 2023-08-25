@@ -27,7 +27,7 @@ class PsychologicalTasks(models.Model):
 
 class TaskItems(models.Model):
     task = models.ForeignKey(PsychologicalTasks, on_delete=models.CASCADE)
-    title = models.CharField(unique=True)
+    title = models.CharField(max_length=100,unique=True)
     instructions = models.TextField()
     demo_link = models.URLField(null=True)
 

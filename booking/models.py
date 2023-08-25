@@ -27,7 +27,7 @@ class TimeSlots(models.Model):
 
 class AppointmentPayments(models.Model):
     user = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
-    transaction_id = models.CharField()
+    transaction_id = models.CharField(max_length=255)
     amount_paid = models.PositiveBigIntegerField()
     paid_date = models.DateField()
 
