@@ -137,7 +137,7 @@ class ForgotPassword(APIView):
         if Account.objects.filter(email=email).exists():
             user = Account.objects.get(email__exact=email)
 
-            current_site = get_current_site(request)
+            current_site = config('BaseUrl')
             mail_subject = 'Please reset your password'
             message = render_to_string('user/reset_password.html', {
                 'user': user,
