@@ -17,10 +17,14 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.shortcuts import HttpResponseRedirect
 from django.contrib.auth import authenticate
+from decouple import config
+
 
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 # Create your views here.
+
+BaseUrl = config('BaseUrl')
 
 
 @api_view(['GET'])
@@ -83,10 +87,10 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         message = 'Congrats! Account activated!'
-        redirect_url = 'http://localhost:5173/login/' + '?message=' + message
+        redirect_url = BaseUrl +'login/' + '?message=' + message
     else:
         message = 'Invalid activation link'
-        redirect_url = 'http://localhost:5173/login/' + '?message=' + message
+        redirect_url = BaseUrl + 'login/' + '?message=' + message
 
     return HttpResponseRedirect(redirect_url)
 
@@ -169,7 +173,7 @@ def reset_validate(request, uidb64, token):
 
     if user is not None and default_token_generator.check_token(user, token):
 
-        return HttpResponseRedirect(f'http://localhost:5173/reset-password/')
+        return HttpResponseRedirect(f'{BaseUrl}reset-password/')
 
 
 class ResetPassword(APIView):
