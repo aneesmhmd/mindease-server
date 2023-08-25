@@ -57,7 +57,7 @@ class UserRegistration(APIView):
             user.set_password(password)
             user.save()
 
-            current_site = get_current_site(request)
+            current_site = config('BaseUrl')
             mail_subject = 'Please activate your account'
             message = render_to_string('user/account_verification.html', {
                 'user': user,
