@@ -4,6 +4,7 @@ from rest_framework.validators import ValidationError
 from booking.models import Appointments
 from admin_home.serializers import ServicesSerializer
 
+
 class CounselorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
@@ -57,4 +58,10 @@ class CounselorEducationSerializer(serializers.ModelSerializer):
 class UpdateAppointmentStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointments
-        fields = ['status']
+        fields = ('status',)
+
+
+class ShareMeetLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointments
+        fields = ('link',)

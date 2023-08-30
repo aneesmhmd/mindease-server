@@ -24,4 +24,5 @@ urlpatterns = [
     path('list-appointments-by-date/<int:id>/<str:date>/', ListAppointmentByDate.as_view()),
     path('update-appointment-status/<int:id>/', UpdateAppointmentStatus.as_view()),
     path('share-meet-link/', ShareMeetLink.as_view()),
+    path('update-meet-link/<int:pk>/', UpdateMeetLink.as_view()),
 ] 

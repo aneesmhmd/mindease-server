@@ -6,6 +6,7 @@ urlpatterns = [
     path('create-checkout-session/',BookingCheckoutSession.as_view()),
     path('payment-success/<int:id>/',AppointmentPaymentSuccess.as_view()),
     path('list-appointments/<int:id>/',ListAppointments.as_view()),
+    path('get-appointment-details/<int:pk>/',GetAppointmentDetails.as_view()),
     path('reschedule-session/<int:id>/',RescheduleSession.as_view()),
-    path('get-meet-link/<int:id>/',GetMeetLink.as_view()),
+    path('get-meet-link/<int:id>/',GetRoomLink.as_view()),
 ]

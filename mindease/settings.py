@@ -145,7 +145,7 @@ DATABASES = {
         'USER': config('DB_USER'),
         'PASSWORD': config('PASSWORD'),
         'HOST': config('HOST'),
-        'PORT' : config('DB_PORT')
+        'PORT': config('DB_PORT')
     }
 }
 
@@ -194,29 +194,42 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOW_METHODS = (
+CORS_ALLOWED_ORIGINS = [
+    config('origin_one'),
+    config('origin_two'),
+]
+
+CORS_ORIGIN_WHITELIST = [
+    config('origin_one'),
+    config('origin_two'),
+]
+
+CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
     "OPTIONS",
     "PATCH",
     "POST",
     "PUT",
-)
-
-CORS_ALLOWED_ORIGINS = [
-    'https://mindeaseonline.netlify.app',
-    config('origin_one'),
-    config('origin_two'),
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    'https://mindeaseonline.netlify.app',
-    config('origin_one'),
-    config('origin_two'),
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'Authorization',
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

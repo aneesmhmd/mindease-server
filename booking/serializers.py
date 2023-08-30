@@ -24,3 +24,9 @@ class MeetLinkSerializer(ModelSerializer):
     class Meta:
         model = MeetLink
         fields = '__all__'
+
+
+class UpdateLinkSerializer(ModelSerializer):
+    class Meta:
+        model = MeetLink
+        fields = ['link']

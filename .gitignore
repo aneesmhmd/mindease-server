@@ -175,5 +175,4 @@ mindease/settings.py
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
-constants.txt
 requirements.txt

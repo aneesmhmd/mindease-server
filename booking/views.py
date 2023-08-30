@@ -112,7 +112,7 @@ class ListAppointments(APIView):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
-class GetMeetLink(APIView):
+class GetRoomLink(APIView):
     def get(self, request, id):
         try:
             link = MeetLink.objects.get(user__id=id)
@@ -120,6 +120,11 @@ class GetMeetLink(APIView):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except MeetLink.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+
+class GetAppointmentDetails(generics.RetrieveAPIView):
+    queryset = Appointments.objects.filter(is_rescheduled=False)
+    serializer_class = AppointmentSerializer
 
 
 class RescheduleSession(APIView):
@@ -129,7 +134,14 @@ class RescheduleSession(APIView):
         slot = TimeSlots.objects.get(id=rescheduled_slot)
         try:
             appointment = Appointments.objects.get(
-                id=id, status='Not attended', is_rescheduled=False)
+                id=id, status='Not attended')
+
+            if appointment.is_rescheduled:
+                return Response(
+                    data={'message': 'Session rescheduled!'},
+                    status=status.HTTP_406_NOT_ACCEPTABLE
+                )
+
             appointment.slot = slot
             appointment.session_date = rescheduled_date
             appointment.status = 'Pending'
@@ -139,6 +151,7 @@ class RescheduleSession(APIView):
                 data={'message': 'Session rescheduled succesfully'},
                 status=status.HTTP_200_OK
             )
+
         except Appointments.DoesNotExist:
             return Response(
                 data={'message': 'No valid session found'},

@@ -242,7 +242,6 @@ class AddSlots(APIView):
             )
 
         except Exception as e:
-            print('---Exception--------\n', e)
             return Response(
                 data={'message': 'Some error occured.Please try again!'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -253,7 +252,7 @@ class ListAllAppointments(APIView):
     def get(self, request, id):
         current_date = datetime.datetime.now().date()
         appointments = Appointments.objects.filter(
-            counselor__id=id, session_date=current_date)
+            counselor__id=id, session_date=current_date, is_paid=True)
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -263,10 +262,15 @@ class ShareMeetLink(CreateAPIView):
     serializer_class = MeetLinkSerializer
 
 
+class UpdateMeetLink(UpdateAPIView):
+    queryset = MeetLink.objects.all()
+    serializer_class = UpdateLinkSerializer
+
+
 class ListAppointmentByDate(APIView):
     def get(self, request, id, date):
         appointments = Appointments.objects.filter(
-            counselor__id=id, session_date=date)
+            counselor__id=id, session_date=date, is_paid=True)
 
         if appointments.exists():
             serializer = AppointmentSerializer(appointments, many=True)
@@ -289,12 +293,12 @@ class UpdateAppointmentStatus(APIView):
             link = MeetLink.objects.get(appointment=appointment)
             link.delete()
             return Response(status=status.HTTP_200_OK)
-        
+
         except Appointments.DoesNotExist:
             return Response(
                 data={'message': 'Appointment not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
+
         except MeetLink.DoesNotExist:
             return Response(status=status.HTTP_200_OK)
