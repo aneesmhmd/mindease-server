@@ -7,3 +7,5 @@ psycopg2
 python-decouple
 gunicorn
 stripe
+django-cloudinary-storage
+cloudinary
