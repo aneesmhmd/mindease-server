@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     'admin_home',
     'booking',
 
+    'cloudinary_storage',
+    'cloudinary',
+
 ]
 
 
@@ -216,3 +219,12 @@ EMAIL_USE_TLS = config('tls')
 
 # stripe configuration
 STRIPE_SECRET_KEY = config('stripe_skey')
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Cloudinary setup
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('cloud_name'),
+    'API_KEY': config('api_key'),
+    'API_SECRET': config('api_secret'),
+}

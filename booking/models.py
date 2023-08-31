@@ -58,7 +58,7 @@ class Appointments(models.Model):
 class MeetLink(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
     appointment = models.OneToOneField(Appointments, on_delete=models.CASCADE)
-    link = models.URLField()
+    link = models.CharField(max_length=100)
 
     def __str__(self):
         return str(self.link)
