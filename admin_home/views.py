@@ -47,7 +47,7 @@ class AddServices(CreateAPIView):
 
 
 class ListServices(ListAPIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     queryset = Service.objects.all().order_by('-id')
     serializer_class = ServicesSerializer
 

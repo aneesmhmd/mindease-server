@@ -11,6 +11,7 @@ def create_jwt_pair_tokens(user: User, counselor=None):
     refresh['email'] = user.email
     refresh['id'] = user.id
     refresh['role'] = user.role
+    refresh['name'] = f'{user.first_name} {user.last_name}'
     refresh['is_active'] = user.is_active
 
     if counselor is not None:

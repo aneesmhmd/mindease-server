@@ -49,6 +49,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['id'] = user.id
         token['email'] = user.email
         token['role'] = user.role
+        token['name'] = f'{user.first_name} {user.last_name}'
         token['is_active'] = user.is_active
         token['is_google'] = user.is_google
 

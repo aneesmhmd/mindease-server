@@ -94,7 +94,7 @@ class ChangePassword(APIView):
 
 
 class CounselorProfile(RetrieveAPIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     queryset = Account.objects.filter(role='counselor')
     serializer_class = UserSerializer
     lookup_field = 'id'
@@ -139,7 +139,7 @@ class GetCounselorAccount(RetrieveAPIView):
     queryset = CounselorAccount.objects.all()
     serializer_class = CounselorAccountSerializer
     lookup_field = 'id'
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
 
 
 class UpdateCounselorAccounts(UpdateAPIView):
@@ -191,7 +191,7 @@ def get_experience_details(request, id):
 class ListSpecializations(ListAPIView):
     permission_classes = [AllowAny]
     queryset = Service.objects.all()
-    serializer_class = ServicesSerializer
+    # serializer_class = ServicesSerializer
 
 
 class ListSlots(APIView):
