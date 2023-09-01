@@ -197,7 +197,7 @@ class ListSpecializations(ListAPIView):
 class ListSlots(APIView):
     def post(self, request, id):
         date = request.data.get('selectedDate')
-        slots = TimeSlots.objects.filter(counselor__id=id, date=date)
+        slots = TimeSlots.objects.filter(counselor__id=id, date=date).order_by('-status')
         if slots.exists():
             serializer = TimeSlotSerializer(slots, many=True)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
