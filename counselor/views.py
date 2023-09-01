@@ -197,7 +197,7 @@ class ListSpecializations(ListAPIView):
 class ListSlots(APIView):
     def post(self, request, id):
         date = request.data.get('selectedDate')
-        slots = TimeSlots.objects.filter(counselor__id=id, date=date).order_by('-status')
+        slots = TimeSlots.objects.filter(counselor__id=id, date=date)
         if slots.exists():
             serializer = TimeSlotSerializer(slots, many=True)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -252,7 +252,7 @@ class ListAllAppointments(APIView):
     def get(self, request, id):
         current_date = datetime.datetime.now().date()
         appointments = Appointments.objects.filter(
-            counselor__id=id, session_date=current_date, is_paid=True)
+            counselor__id=id, session_date=current_date, is_paid=True).order_by('-status')
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
