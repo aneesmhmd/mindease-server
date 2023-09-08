@@ -189,9 +189,9 @@ def get_experience_details(request, id):
 
 
 class ListSpecializations(ListAPIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     queryset = Service.objects.all()
-    # serializer_class = ServicesSerializer
+    serializer_class = ServicesSerializer
 
 
 class ListSlots(APIView):
