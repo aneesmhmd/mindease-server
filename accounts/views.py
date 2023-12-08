@@ -107,7 +107,7 @@ class GoogleAuthentication(APIView):
         password = request.data.get('password')
 
         if not Account.objects.filter(email=email).exists():
-            serializer = GoogleAuthSerializer(data=request.adta)
+            serializer = GoogleAuthSerializer(data=request.data)
 
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
