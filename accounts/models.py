@@ -9,7 +9,7 @@ class AccountManager(BaseUserManager):
 
         user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
-        user.save(self._db)
+        user.save()
 
         return user
 
